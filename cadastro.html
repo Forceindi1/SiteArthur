@@ -1,0 +1,16 @@
+<!doctype html><html lang="pt-br"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro — Arthur Vitelbo</title><script src="https://cdn.tailwindcss.com"></script>
+<style>:root{color-scheme:dark}body{background:#121212;color:#e5e5e5}.wrap{max-width:720px;margin:0 auto}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:1rem;padding:.8rem 1.25rem;font-weight:600;border:1px solid #27272a}.btn-primary{background:#fafafa;color:#09090b;border-color:#fafafa}.field{width:100%;border-radius:.75rem;border:1px solid #27272a;background:#171717;padding:.7rem .9rem}</style>
+</head><body><main class="wrap px-4 py-16">
+<h1 class="text-3xl font-semibold mb-2">Cadastre-se</h1>
+<p class="text-zinc-400 mb-8">Receba uma proposta em até 24h úteis.</p>
+<form name="leads" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="obrigado-lead.html" class="grid gap-3">
+<input type="hidden" name="form-name" value="leads"/><input name="bot-field" class="hidden"/>
+<input name="nome" class="field" placeholder="Seu nome" required>
+<input name="celular" class="field" placeholder="Seu WhatsApp (com DDD)" required>
+<input name="email" type="email" class="field" placeholder="Seu e-mail" required>
+<button type="submit" class="btn btn-primary mt-2">Enviar</button>
+</form>
+<p class="text-xs text-zinc-500 mt-6">Ao enviar, você concorda em ser contatado(a) por e-mail/WhatsApp para orçar seu projeto.</p>
+</main></body></html>
