@@ -6,6 +6,18 @@
 <h1 class="text-3xl font-semibold mb-2">Cadastre-se</h1>
 <p class="text-zinc-400 mb-8">Receba uma proposta em até 24h úteis.</p>
 <form name="leads" method="POST" action="https://formspree.io/f/mdkpjkdq" class="grid gap-3">
+  <input name="nome" class="field" placeholder="Seu nome" required>
+  <input name="celular" class="field" placeholder="Seu WhatsApp (com DDD)" required>
+  <input name="email" type="email" class="field" placeholder="Seu e-mail" required>
+
+  <!-- Campos ocultos -->
+  <input type="hidden" name="_subject" value="Novo lead — Portfólio Arthur Vitelbo">
+  <input type="hidden" name="_next" value="obrigado-lead.html">
+  <input type="text" name="_gotcha" class="hidden" style="display:none">
+
+  <button type="submit" class="btn btn-primary mt-2">Enviar</button>
+</form>
+
 <input type="hidden" name="form-name" value="leads"/><input name="bot-field" class="hidden"/>
 <input name="nome" class="field" placeholder="Seu nome" required>
 <input name="celular" class="field" placeholder="Seu WhatsApp (com DDD)" required>
