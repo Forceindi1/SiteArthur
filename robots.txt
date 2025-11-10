@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://arthurvitelbo.com.br/sitemap.xml
