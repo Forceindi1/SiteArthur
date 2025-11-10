@@ -1,14 +1,11 @@
-<!doctype html>
-<html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Cadastro — Arthur Vitelbo</title><script src="https://cdn.tailwindcss.com"></script>
-<style>:root{color-scheme:dark}body{background:#0b0b0b;color:#e7e7e7;font-family:Inter,system-ui,sans-serif}.wrap{max-width:720px;margin:0 auto;padding:2.5rem 1.25rem}.field{width:100%;background:#141414;border:1px solid #262626;border-radius:10px;padding:12px 14px;color:#f5f5f5;margin-bottom:.9rem}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:.9rem 1.2rem;font-weight:600;background:#2563eb;color:#fff}</style></head>
-<body><main class="wrap"><h1 class="text-3xl font-semibold">Solicite seu orçamento</h1>
-<p class="text-zinc-400 mb-6">Preencha seus dados e receba uma proposta em até 24h úteis.</p>
-<form name="leads" method="POST" action="https://formspree.io/f/mdkpjkdq" class="grid gap-3">
-<label>Nome completo</label><input name="nome" class="field" required placeholder="Seu nome">
-<label>WhatsApp</label><input name="celular" class="field" required placeholder="Seu WhatsApp (com DDD)">
-<label>E-mail</label><input name="email" type="email" class="field" required placeholder="Seu e-mail">
-<label>Pacote de interesse</label><select id="pacote" class="field"><option value="">Escolher depois</option><option value="basico">Básico (R$ 120)</option><option value="intermedio">Intermediário (R$ 350)</option><option value="premium">Premium (R$ 1.000)</option></select>
-<label>Conte um pouco sobre o projeto</label><textarea name="mensagem" rows="4" class="field" placeholder="Tipo de vídeo, duração, objetivo..."></textarea>
-<input type="hidden" name="_subject" value="Novo lead — Portfólio Arthur Vitelbo"><input type="hidden" id="nextUrl" name="_next" value="https://arthurvitelbo.com.br/obrigado-lead.html">
-<button type="submit" class="btn mt-2">Enviar</button></form></main></body></html>
+<!doctype html><html lang='pt-br'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Solicitar Orçamento — Arthur Vitelbo</title><script src='https://cdn.tailwindcss.com'></script></head>
+<body class='bg-black text-white font-[Inter] flex items-center justify-center min-h-screen'>
+<form action='https://formspree.io/f/yourformid' method='POST' class='bg-zinc-900 p-8 rounded-2xl max-w-md w-full space-y-4'>
+  <input type='hidden' name='_redirect' value='https://arthurvitelbo.com.br/obrigado.html'>
+  <h1 class='text-2xl font-semibold mb-4'>Solicitar Orçamento</h1>
+  <input type='text' name='Nome' placeholder='Seu nome' required class='w-full p-3 rounded bg-zinc-800 border border-zinc-700'>
+  <input type='email' name='Email' placeholder='Seu e-mail' required class='w-full p-3 rounded bg-zinc-800 border border-zinc-700'>
+  <textarea name='Mensagem' placeholder='Descreva seu projeto...' required class='w-full p-3 rounded bg-zinc-800 border border-zinc-700'></textarea>
+  <button type='submit' class='w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-semibold'>Enviar</button>
+</form></body></html>

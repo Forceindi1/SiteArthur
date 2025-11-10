@@ -4,29 +4,29 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Arthur Vitelbo — Editor Audiovisual</title>
-  <meta name="description" content="Edição que impulsiona marcas e criadores. Storytelling que converte com ritmo, emoção e resultado.">
+  <meta name="description" content="Histórias que conectam, vídeos que vendem. Transforme suas ideias em narrativas visuais com emoção e propósito.">
   <link rel="icon" href="assets/favicon.ico" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: dark; scroll-behavior: smooth }
-    body { background:#0b0b0b; color:#e7e7e7; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; }
-    section { scroll-margin-top:80px }
-    .fade-in { opacity:0; transform:translateY(20px); transition:opacity .8s ease, transform .8s ease; }
-    .fade-in.visible { opacity:1; transform:translateY(0); }
-    .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .3s ease; }
-    .card:hover { border-color:#2563eb; transform:translateY(-4px); }
-    .btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.2rem; border-radius:12px; font-weight:600; transition:all .25s; }
-    .btn-primary { background:#2563eb; color:#fff; }
-    .btn-primary:hover { background:#1e4fd0; transform:scale(1.05); }
-    .btn-ghost { color:#e7e7e7; border:1px solid #303030; }
+    body { background:#0b0b0b; color:#e7e7e7; font-family:Inter,system-ui,sans-serif; overflow-x:hidden }
+    .fade-in { opacity:0; transform:translateY(30px); transition:opacity .8s ease, transform .8s ease }
+    .fade-in.visible { opacity:1; transform:translateY(0) }
+    .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .4s ease }
+    .card:hover { transform:translateY(-6px) scale(1.02) }
+    .btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.4rem; border-radius:12px; font-weight:600; transition:all .3s }
+    .btn-primary { background:#2563eb; color:#fff }
+    .btn-primary:hover { background:#1e4fd0; box-shadow:0 0 12px #2563ebaa }
     header.sticky { position:sticky; top:0; z-index:40; backdrop-filter:blur(8px); background:rgba(11,11,11,.7) }
+    .star { color:#facc15; }
+    .hover-glow:hover { box-shadow:0 0 20px rgba(37,99,235,0.4); }
   </style>
 </head>
 <body>
 <header class="sticky">
   <div class="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
     <a href="#top" class="flex items-center gap-2">
-      <img src="assets/arthur-1.jpg" alt="Arthur Vitelbo" class="w-9 h-9 rounded-xl object-cover">
+      <div class="w-9 h-9 bg-zinc-800 rounded-xl flex items-center justify-center text-white font-bold text-lg">AV</div>
       <div><strong>Arthur Vitelbo</strong><span class="text-zinc-400"> / Editor Audiovisual</span></div>
     </a>
     <nav class="hidden md:flex gap-6 text-sm text-zinc-300">
@@ -36,53 +36,42 @@
   </div>
 </header>
 
-<section id="top" class="relative h-[90vh] flex items-center justify-center text-center px-4">
-  <div class="absolute inset-0 bg-[url('assets/thumb3.jpg')] bg-cover bg-center opacity-40"></div>
+<section id="top" class="relative h-[100vh] flex items-center justify-center text-center px-4">
+  <div class="absolute inset-0 bg-[url('assets/13cb09a1-9857-43fb-a9fb-e09ede7ae5a0.png')] bg-cover bg-center opacity-50"></div>
   <div class="relative z-10 max-w-3xl">
-    <h1 class="text-4xl md:text-6xl font-bold fade-in">Edição que impulsiona marcas</h1>
-    <p class="text-zinc-300 mt-4 fade-in">Transformo ideias em vídeos com ritmo, emoção e propósito.</p>
+    <h1 class="text-5xl md:text-6xl font-bold fade-in">Histórias que conectam, vídeos que vendem.</h1>
+    <p class="text-zinc-300 mt-4 fade-in">Transformo ideias em narrativas visuais com propósito, emoção e resultado.</p>
     <div class="mt-8 flex flex-wrap justify-center gap-4 fade-in">
-      <a href="#portfolio" class="btn btn-ghost">Ver trabalhos</a>
+      <a href="#portfolio" class="btn border border-zinc-600 text-zinc-300 hover-glow">Ver trabalhos</a>
       <a href="cadastro.html" class="btn btn-primary">Solicitar orçamento</a>
     </div>
   </div>
 </section>
 
-<section id="sobre" class="max-w-7xl mx-auto py-20 px-4 fade-in flex flex-col md:flex-row items-center gap-10">
-  <img src="assets/arthur-1.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700">
+<section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
+  <img src="assets/f5f8c214-a5de-4095-8f92-0787ddbcbc22.png" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 animate-slide-left">
   <div>
     <h2 class="text-3xl font-semibold mb-2">Sobre mim</h2>
-    <p class="text-zinc-400 leading-relaxed">Sou editor audiovisual especializado em transformar ideias em histórias que conectam. Com uma abordagem que une precisão técnica e sensibilidade criativa, entrego vídeos que elevam a identidade de marcas, criadores e empresas. Cada projeto é tratado como uma narrativa única — com ritmo, emoção e propósito.</p>
-    <div class="mt-6">
-      <a href="https://www.instagram.com/arthureditor.jpg/" target="_blank" class="btn btn-primary">Ver mais no Instagram</a>
-    </div>
+    <p class="text-zinc-400 leading-relaxed">Sou <strong>Arthur Vitelbo</strong>, editor audiovisual apaixonado por criar histórias que inspiram. Acredito que edição é mais do que cortes — é ritmo, identidade e emoção. Cada vídeo é uma chance de contar algo que o público sinta. E é isso que eu entrego: sentimento e resultado em cada frame.</p>
+    <div class="mt-6"><a href="#portfolio" class="btn btn-primary">Ver portfólio</a></div>
   </div>
 </section>
 
-<section id="portfolio" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-2">Portfólio</h2>
-  <p class="text-zinc-400 mb-8">Assista aos meus trabalhos diretamente no Instagram.</p>
+<section id="pacotes" class="max-w-7xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-2">Pacotes</h2>
+  <p class="text-zinc-400 mb-8">Escolha o plano que melhor combina com o seu projeto.</p>
   <div class="grid md:grid-cols-3 gap-6">
-    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card relative overflow-hidden group">
-      <img src="assets/thumb1.jpg" alt="Vídeo 1" class="w-full h-64 object-cover group-hover:scale-110 transition">
-      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><span class="text-white text-lg font-semibold">▶ Assistir</span></div>
-    </a>
-    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card relative overflow-hidden group">
-      <img src="assets/thumb2.jpg" alt="Vídeo 2" class="w-full h-64 object-cover group-hover:scale-110 transition">
-      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><span class="text-white text-lg font-semibold">▶ Assistir</span></div>
-    </a>
-    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card relative overflow-hidden group">
-      <img src="assets/thumb3.jpg" alt="Vídeo 3" class="w-full h-64 object-cover group-hover:scale-110 transition">
-      <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><span class="text-white text-lg font-semibold">▶ Assistir</span></div>
-    </a>
+    <div class="card p-6 hover-glow"><h3 class="text-lg font-semibold">Básico ⭐</h3><div class="text-3xl font-bold mt-2">R$ 120</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (até 45s)</li><li>• 2 revisões</li><li>• Legendas simples</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
+    <div class="card p-6 border-2 border-blue-600 hover-glow"><h3 class="text-lg font-semibold">Intermediário ⭐⭐⭐</h3><div class="text-3xl font-bold mt-2">R$ 350</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (60–90s)</li><li>• 2 revisões</li><li>• Motion e grafismos</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
+    <div class="card p-6 hover-glow"><h3 class="text-lg font-semibold">Premium ⭐⭐⭐⭐⭐</h3><div class="text-3xl font-bold mt-2">R$ 1.000</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (até 2min)</li><li>• Color grading</li><li>• Motion avançado</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
   </div>
 </section>
 
 <section id="contato" class="max-w-7xl mx-auto py-20 px-4 fade-in">
   <h2 class="text-3xl font-semibold mb-2">Contato</h2>
-  <p class="text-zinc-400 mb-6">Fale comigo pelos canais abaixo.</p>
+  <p class="text-zinc-400 mb-6">Entre em contato e vamos criar algo incrível juntos.</p>
   <div class="grid md:grid-cols-4 gap-6 text-sm">
-    <div class="card p-5"><h3 class="font-semibold mb-2">Instagram</h3><a class="underline block" href="https://www.instagram.com/letscreate.jpg/" target="_blank">@letscreate.jpg</a><a class="underline block mt-1" href="https://www.instagram.com/arthureditor.jpg/" target="_blank">@arthureditor.jpg</a></div>
+    <div class="card p-5"><h3 class="font-semibold mb-2">Instagram</h3><a class="underline block" href="https://www.instagram.com/arthureditor.jpg/" target="_blank">@arthureditor.jpg</a></div>
     <div class="card p-5"><h3 class="font-semibold mb-2">WhatsApp</h3><a class="underline block" href="https://wa.me/5511915382119" target="_blank">+55 11 91538-2119</a></div>
     <div class="card p-5"><h3 class="font-semibold mb-2">Telefone</h3><a class="underline block" href="tel:+5511989930723">+55 11 98993-0723</a></div>
     <div class="card p-5"><h3 class="font-semibold mb-2">E-mail</h3><a class="underline" href="mailto:letscreatebr@gmail.com">letscreatebr@gmail.com</a></div>
@@ -91,6 +80,11 @@
 
 <footer class="border-t border-zinc-800 py-8 text-sm text-zinc-500 flex flex-col md:flex-row items-center justify-between gap-3 px-4 max-w-7xl mx-auto">
   <span>© 2025 Arthur Vitelbo — Todos os direitos reservados.</span>
-  <div class="flex gap-4"><a href="privacy.html" class="underline">Política de Privacidade</a><a href="terms.html" class="underline">Termos de Serviço</a></div>
+  <div class="flex gap-4"><a href="privacy.html" class="underline">Privacidade</a><a href="terms.html" class="underline">Termos</a></div>
 </footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+</script>
 </body></html>
