@@ -1,13 +1,32 @@
-<!doctype html><html lang='pt-br'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Obrigado — Arthur Vitelbo</title><script src='https://cdn.tailwindcss.com'></script></head>
-<body class='bg-black text-white font-[Inter] flex flex-col items-center justify-center min-h-screen text-center'>
-<h1 class='text-4xl font-bold mb-4'>🎉 Obrigado por entrar em contato!</h1>
-<p class='text-zinc-400 max-w-lg mb-8'>Arthur vai te responder em breve. Enquanto isso, veja alguns dos meus trabalhos e descubra o que posso criar para você.</p>
-<div class='flex gap-4'>
-<a href='index.html#portfolio' class='bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-semibold'>Ver Portfólio</a>
-<a href='index.html' class='border border-zinc-600 hover:border-blue-500 px-6 py-3 rounded-lg font-semibold'>Voltar ao Início</a>
-</div>
-<canvas id='confetti'></canvas>
-<script src='https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js'></script>
-<script>setTimeout(()=>{confetti({particleCount:150,spread:70,origin:{y:0.6}})},300);</script>
-</body></html>
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Obrigado — Arthur Vitelbo</title>
+<link rel="icon" href="assets/favicon.ico" />
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body { background:#0b0b0b; color:#e7e7e7; font-family:Inter,system-ui,sans-serif; overflow-x:hidden }
+.fade-in { opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease }
+.fade-in.visible { opacity:1; transform:translateY(0) }
+.btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.4rem; border-radius:12px; font-weight:600; transition:all .3s }
+.btn-primary { background:#2563eb; color:#fff }
+.btn-primary:hover { background:#1e4fd0; box-shadow:0 0 12px #2563ebaa }
+</style>
+</head>
+<body class="flex flex-col items-center justify-center h-screen text-center">
+  <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="w-20 h-20 rounded-full border-2 border-blue-500 shadow-lg mb-6 fade-in">
+  <h1 class="text-4xl font-bold mb-4 fade-in">🎉 Obrigado por entrar em contato!</h1>
+  <p class="text-zinc-400 mb-10 fade-in">Sua mensagem foi recebida. Em breve retornarei pessoalmente.</p>
+  <div class="flex flex-col sm:flex-row gap-4 fade-in">
+    <a href="index.html#portfolio" class="btn btn-primary">Ver portfólio</a>
+    <a href="index.html" class="btn border border-zinc-700 text-zinc-300">Voltar à página inicial</a>
+  </div>
+  <footer class="absolute bottom-5 text-sm text-zinc-500">© 2025 Arthur Vitelbo — Todos os direitos reservados.</footer>
+  <script>
+    const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
+    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+  </script>
+</body>
+</html>
