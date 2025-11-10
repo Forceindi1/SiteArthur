@@ -4,35 +4,92 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Obrigado! — Arthur Vitelbo</title>
+  <meta name="description" content="Obrigado! Recebemos seu pedido de orçamento. Arthur Vitelbo — Editor que impulsiona marcas.">
+  <link rel="icon" href="assets/favicon.ico" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root { color-scheme: dark; }
-    body  { background:#121212; color:#e7e7e7; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.25rem; }
-    .card { background: #161616; border: 1px solid #262626; border-radius: 16px; padding: 2rem; }
-    .btn  { display:inline-block; padding:.9rem 1.25rem; border-radius: .9rem; font-weight:600; background:#2563eb; color:#fff; }
-    .btn:hover { background:#1e4fd0; }
+    :root { color-scheme: dark }
+    body  { background:#0b0b0b; color:#e7e7e7; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 3rem 1.25rem; }
+    .card { background: #131313; border: 1px solid #232323; border-radius: 20px; padding: 2.25rem }
+    .btn  { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.2rem; border-radius: .9rem; font-weight:600; }
+    .btn-primary { background:#2563eb; color:#fff }
+    .btn-primary:hover { background:#1e4fd0 }
+    .btn-ghost { color:#a1a1aa }
+    .chip { display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .6rem; border:1px solid #2a2a2a; border-radius:999px; font-size:.75rem; color:#a1a1aa }
+    .pulse { animation: pop .5s ease-out forwards; opacity:0; transform: translateY(6px) scale(.98) }
+    @keyframes pop { to { opacity:1; transform: translateY(0) scale(1) } }
+    #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 50; }
   </style>
+
+  <!-- cole o GA4/Pixel aqui quando tiver os IDs
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-XXXXXXX');</script>
+  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','PIXEL_ID_AQUI');fbq('track','PageView');</script>
+  <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=PIXEL_ID_AQUI&ev=PageView&noscript=1"/></noscript>
+  -->
 </head>
 <body>
-  <main class="wrap">
-    <div class="card text-center">
-      <h1 class="text-3xl md:text-4xl font-semibold">Obrigado! Recebi seus dados.</h1>
-      <p class="text-zinc-400 mt-3">
-        Vou analisar seu briefing e retorno com uma proposta em até <strong>24h úteis</strong>.
-      </p>
+  <canvas id="confetti"></canvas>
 
-      <div class="mt-8 flex items-center justify-center gap-3">
-        <a href="index.html" class="btn">Voltar ao site</a>
-        <a href="https://wa.me/5511915382119" target="_blank" rel="noreferrer" class="underline">
-          Falar no WhatsApp
-        </a>
+  <main class="wrap">
+    <div class="card pulse">
+      <div class="flex items-center justify-between gap-4">
+        <span class="chip" id="chip-status">✔ Pedido enviado</span>
+        <a href="index.html" class="btn btn-ghost">Voltar ao site</a>
+      </div>
+
+      <div class="mt-6">
+        <h1 class="text-3xl md:text-4xl font-semibold">Obrigado! Recebi seus dados.</h1>
+        <p class="text-zinc-400 mt-3" id="msg">
+          Vou analisar seu briefing e retorno com uma proposta em até <strong>24h úteis</strong>.
+          Se precisar falar agora, me chame no WhatsApp.
+        </p>
+      </div>
+
+      <div class="mt-8 flex flex-col sm:flex-row gap-3">
+        <a href="https://wa.me/5511915382119" target="_blank" rel="noreferrer" class="btn btn-primary w-full sm:w-auto">Falar no WhatsApp</a>
+        <a href="index.html#portfolio" class="btn btn-ghost w-full sm:w-auto">Ver portfólio</a>
       </div>
 
       <p class="text-xs text-zinc-500 mt-8">
-        Caso não encontre minha resposta, verifique sua caixa de spam ou promoções.
+        Não encontrou meu retorno? Confira a caixa de <em>Spam</em> ou <em>Promoções</em>.
       </p>
     </div>
   </main>
+
+  <script>
+    // Personalização por pacote (?p=basico | intermedio | premium)
+    (function () {
+      const params = new URLSearchParams(location.search);
+      const p = (params.get('p') || '').toLowerCase();
+      const chip = document.getElementById('chip-status');
+      const msg  = document.getElementById('msg');
+
+      if (p) {
+        const label =
+          p === 'premium'     ? 'Pacote Premium' :
+          p === 'intermedio'  ? 'Pacote Intermediário' :
+          p === 'basico'      ? 'Pacote Básico' : p.charAt(0).toUpperCase()+p.slice(1);
+        chip.textContent = '✔ Pedido enviado — ' + label;
+        msg.innerHTML = `Seu interesse pelo <strong>${label}</strong> foi registrado. Vou analisar e retorno em até <strong>24h úteis</strong>.`;
+      }
+
+      // Disparos de conversão (se existirem)
+      if (typeof gtag === 'function') gtag('event', 'conversion', { event_category: 'lead', package: p || 'na' });
+      if (typeof fbq  === 'function') fbq('track', 'Lead', { package: p || 'na' });
+    })();
+
+    // Confete leve (sem lib externa)
+    (function(){
+      const c = document.getElementById('confetti'), ctx = c.getContext('2d');
+      let W,H,pieces=[];
+      function resize(){ W=c.width=innerWidth; H=c.height=innerHeight; }
+      addEventListener('resize',resize); resize();
+      function spawn(n=160){ for(let i=0;i<n;i++) pieces.push({x:Math.random()*W,y:-20-Math.random()*H*.5,r:4+Math.random()*6,c:`hsl(${Math.random()*360},90%,60%)`,vy:2+Math.random()*3,vx:-1+Math.random()*2,rot:Math.random()*Math.PI,vr:-.1+Math.random()*.2}); }
+      function draw(){ ctx.clearRect(0,0,W,H); for(const p of pieces){ p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle=p.c; ctx.fillRect(-p.r,-p.r*.5,p.r*2,p.r); ctx.restore(); } pieces=pieces.filter(p=>p.y<H+40); requestAnimationFrame(draw); }
+      spawn(160); setTimeout(()=>spawn(80),400); draw(); setTimeout(()=>{pieces=[]},6000);
+    })();
+  </script>
 </body>
 </html>
