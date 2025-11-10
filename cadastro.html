@@ -18,7 +18,9 @@
       justify-content: center;
       align-items: center;
       padding: 3rem;
+      overflow-x: hidden;
     }
+
     form {
       background: #111;
       border: 1px solid #222;
@@ -29,6 +31,7 @@
       box-shadow: 0 0 40px rgba(37,99,235,0.15);
       animation: fadeIn 1.2s ease;
     }
+
     input, textarea, select {
       background: #1a1a1a;
       border: 1px solid #2d2d2d;
@@ -38,14 +41,26 @@
       width: 100%;
       font-size: 1.1rem;
       transition: all .3s ease;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fieldFade 1s forwards;
     }
+
+    input:nth-child(1) { animation-delay: 0.2s; }
+    input:nth-child(2) { animation-delay: 0.4s; }
+    input:nth-child(3) { animation-delay: 0.6s; }
+    select { animation-delay: 0.8s; }
+    textarea { animation-delay: 1s; }
+
     input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: #2563eb;
       box-shadow: 0 0 10px #2563eb66;
     }
+
     textarea { min-height: 140px; resize: vertical; }
+
     button {
       background: #2563eb;
       color: #fff;
@@ -58,15 +73,18 @@
       transition: all .3s ease;
       position: relative;
     }
+
     button:hover:not(:disabled) {
       background: #1e4fd0;
       box-shadow: 0 0 20px #2563eb99;
       transform: scale(1.03);
     }
+
     button:disabled {
-      opacity: 0.6;
+      opacity: 0.7;
       cursor: not-allowed;
     }
+
     .spinner {
       position: absolute;
       right: 1.2rem;
@@ -80,32 +98,47 @@
       animation: spin 0.8s linear infinite;
       display: none;
     }
+
     @keyframes spin {
       to { transform: translateY(-50%) rotate(360deg); }
     }
+
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       margin-bottom: 1.5rem;
       font-weight: 700;
       text-align: center;
     }
+
     p {
       text-align: center;
       color: #9ca3af;
       font-size: 1rem;
       margin-bottom: 2.5rem;
     }
+
+    .safe {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @keyframes fieldFade {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .icon { width: 20px; height: 20px; display:inline-block; vertical-align:middle; margin-right:6px; }
   </style>
 </head>
 
 <body>
   <form id="orcamentoForm" action="https://formspree.io/f/mdkpjkdq" method="POST" onsubmit="salvarLead()">
-    <!-- Redirecionamento automático -->
     <input type="hidden" name="_redirect" value="https://arthurvitelbo.com.br/obrigado.html">
 
     <h1>Solicitar Orçamento</h1>
@@ -125,12 +158,14 @@
 
     <textarea name="Mensagem" placeholder="Descreva seu projeto, referências ou prazos desejados..." required></textarea>
 
+    <p class="safe">🔒 Seus dados estão protegidos e não serão compartilhados.</p>
+
     <button type="submit" id="enviarBtn">
       Enviar Solicitação
       <span class="spinner" id="spinner"></span>
     </button>
 
-    <div class="text-center mt-8 text-zinc-400 text-sm">
+    <div class="text-center mt-10 text-zinc-400 text-sm">
       <p>❤️ Retornarei o contato em até <strong>24h via WhatsApp</strong>.</p>
       <div class="flex justify-center items-center gap-6 mt-4">
         <a href="https://wa.me/5511989930723" target="_blank" class="flex items-center gap-2 text-green-400 hover:text-green-300 transition">
@@ -146,21 +181,26 @@
   </form>
 
   <script>
-    // Máscara do telefone e loading no envio
     $(document).ready(function(){
       $('#telefone').mask('(00) 00000-0000');
 
       $('#orcamentoForm').on('submit', function(){
         const nome = $('input[name="Nome"]').val();
-        localStorage.setItem('lead_nome', nome); // Salva o nome para a página de agradecimento
+        localStorage.setItem('lead_nome', nome);
 
         $('#enviarBtn').attr('disabled', true);
         $('#spinner').fadeIn(200);
         $('#enviarBtn').text('Enviando...');
+
+        setTimeout(() => {
+          $('#spinner').hide();
+          $('#enviarBtn')
+            .css('background', '#22c55e')
+            .html('✅ Enviado com sucesso!');
+        }, 800);
       });
     });
 
-    // Captura de lead
     function salvarLead() {
       const nome = document.querySelector('input[name="Nome"]').value;
       localStorage.setItem('lead_nome', nome);
