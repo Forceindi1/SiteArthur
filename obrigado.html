@@ -3,17 +3,119 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Obrigado — Arthur Vitelbo</title>
+  <title>Obrigado! — Arthur Vitelbo</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.0/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      background: #0b0b0b;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+      text-align: center;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 24px;
+      padding: 3rem;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 0 30px rgba(37,99,235,0.15);
+      animation: fadeIn 1s ease;
+    }
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #9ca3af;
+      font-size: 1.1rem;
+      margin-bottom: 1.8rem;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #25d366;
+      color: #fff;
+      font-weight: 600;
+      padding: 1.2rem 2rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #25d36633;
+      animation: pulse 3s infinite;
+    }
+    .cta:hover {
+      background: #1eb75b;
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #25d36677;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-top: 2rem;
+      color: #60a5fa;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .back-btn:hover { color: #3b82f6; text-decoration: underline; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+  </style>
 </head>
-<body class="bg-black text-white flex flex-col items-center justify-center min-h-screen text-center font-[Inter]">
-  <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="w-20 h-20 rounded-full border-2 border-blue-500 shadow-lg mb-6">
-  <h1 class="text-3xl font-bold mb-4">🎉 Obrigado pelo contato!</h1>
-  <p class="text-zinc-400 mb-8">Sua mensagem foi recebida. Em breve retornarei pessoalmente.</p>
-  <div class="flex flex-col sm:flex-row gap-4">
-    <a href="index.html" class="bg-blue-600 hover:bg-blue-500 py-3 px-6 rounded-lg font-semibold">Voltar à Página Inicial</a>
-    <a href="index.html#portfolio" class="border border-zinc-700 py-3 px-6 rounded-lg text-zinc-300 hover:bg-zinc-800">Ver Portfólio</a>
+
+<body>
+  <div class="card">
+    <h1 id="greeting">🎬 Obrigado pelo seu contato!</h1>
+    <p id="message">
+      Estou revisando suas informações e retornarei em até <strong>24h via WhatsApp</strong>.<br>
+      Enquanto isso, se quiser adiantar, fale comigo agora mesmo.
+    </p>
+
+    <a id="whatsBtn" href="https://wa.me/5511989930723?text=Olá%20Arthur,%20acabei%20de%20enviar%20meu%20orçamento%20pelo%20site%20e%20gostaria%20de%20falar%20sobre%20meu%20projeto!%20🎬" target="_blank" class="cta">
+      💬 Falar agora no WhatsApp
+    </a>
+
+    <p class="mt-6 italic text-gray-400 text-sm">
+      “Cada história merece uma edição à altura — e a sua já começou.” ✨
+    </p>
+
+    <a href="index.html" class="back-btn">← Voltar para o início</a>
   </div>
-  <footer class="absolute bottom-5 text-sm text-zinc-500">© 2025 Arthur Vitelbo — Todos os direitos reservados.</footer>
+
+  <script>
+    window.onload = () => {
+      // confete suave
+      confetti({
+        particleCount: 100,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#ffffff', '#60a5fa', '#93c5fd'],
+        disableForReducedMotion: true
+      });
+
+      const nome = localStorage.getItem('lead_nome');
+      if (nome) {
+        const primeiroNome = nome.split(' ')[0];
+        document.getElementById('greeting').innerHTML = `🎬 Obrigado, ${primeiroNome}!`;
+      }
+    };
+  </script>
 </body>
 </html>
