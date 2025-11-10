@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arthur Vitelbo — Editor Audiovisual</title>
-  <meta name="description" content="Edição cinematográfica que conecta marcas e emoções. Transforme suas ideias em vídeos de alto impacto com Arthur Vitelbo.">
   <link rel="icon" href="assets/favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -17,31 +16,28 @@
     .btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.4rem; border-radius:12px; font-weight:600; transition:all .3s }
     .btn-primary { background:#2563eb; color:#fff }
     .btn-primary:hover { background:#1e4fd0; box-shadow:0 0 12px #2563ebaa }
-    header.sticky { position:sticky; top:0; z-index:40; backdrop-filter:blur(8px); background:rgba(11,11,11,.7) }
-    .hover-glow:hover { box-shadow:0 0 20px rgba(37,99,235,0.4); }
-    .scroll-h { overflow-x:auto; display:flex; gap:1rem; scrollbar-width:none }
-    .scroll-h::-webkit-scrollbar { display:none }
-    .stars { color:#2563eb; letter-spacing:2px; }
-    .profile-photo { width:42px; height:42px; border-radius:50%; border:2px solid #2563eb; box-shadow:0 0 10px rgba(37,99,235,0.4); transition:transform .4s ease, box-shadow .4s ease; }
-    .profile-photo:hover { transform:scale(1.05); box-shadow:0 0 18px rgba(37,99,235,0.6); }
+    .faq-item { cursor:pointer; border:1px solid #232323; border-radius:14px; background:#121212; padding:1rem; transition:all .3s ease; }
+    .faq-item:hover { box-shadow:0 0 10px rgba(37,99,235,0.3); }
+    .faq-answer { display:none; margin-top:.5rem; color:#aaa; }
+    .faq-item.open .faq-answer { display:block; }
+    .faq-item svg { transition:transform .3s ease; }
+    .faq-item.open svg { transform:rotate(180deg); }
   </style>
 </head>
 <body>
-
-<header class="sticky">
+<header class="sticky top-0 backdrop-blur-md bg-black/60 z-40">
   <div class="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
     <a href="#sobre" class="flex items-center gap-3">
-      <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="profile-photo">
+      <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="w-10 h-10 rounded-full border-2 border-blue-500 shadow">
       <div><strong>Arthur Vitelbo</strong><span class="text-zinc-400"> / Editor Audiovisual</span></div>
     </a>
     <nav class="hidden md:flex gap-6 text-sm text-zinc-300">
-      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#depoimentos">Depoimentos</a><a href="#contato">Contato</a>
+      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a><a href="#contato">Contato</a>
       <a href="cadastro.html" class="btn btn-primary ml-2">Solicitar orçamento</a>
     </nav>
   </div>
 </header>
 
-<!-- HERO -->
 <section class="text-center py-24 fade-in">
   <h1 class="text-4xl md:text-5xl font-bold mb-4">Edição que impulsiona marcas</h1>
   <p class="text-zinc-400 mb-8">Transformo ideias em vídeos com ritmo, emoção e propósito.</p>
@@ -51,107 +47,38 @@
   </div>
 </section>
 
-<!-- SERVIÇOS -->
-<section id="servicos" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-2xl font-semibold mb-6">Serviços</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="card p-6">
-      <h3 class="font-semibold mb-2">🎬 Reels / Shorts</h3>
-      <p class="text-zinc-400 text-sm">Vídeos verticais de alto impacto, ritmo ágil e narrativa clara.</p>
-    </div>
-    <div class="card p-6">
-      <h3 class="font-semibold mb-2">🏢 Institucionais</h3>
-      <p class="text-zinc-400 text-sm">Edição, correção de cor e áudio para vídeos corporativos.</p>
-    </div>
-    <div class="card p-6">
-      <h3 class="font-semibold mb-2">✨ Motion & Legendas</h3>
-      <p class="text-zinc-400 text-sm">Textos animados, lower-thirds e gráficos para performance.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SOBRE MIM -->
 <section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
-  <img src="assets/arthur-sobre.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover-glow">
+  <img src="assets/arthur-sobre.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover:scale-105 transition">
   <div>
     <h2 class="text-3xl font-semibold mb-2">Sobre mim</h2>
     <p class="text-zinc-400 leading-relaxed">Sou <strong>Arthur Vitelbo</strong>, editor audiovisual apaixonado por criar histórias que inspiram. Acredito que edição é mais do que cortes — é ritmo, identidade e emoção. Cada vídeo é uma chance de contar algo que o público sinta. E é isso que eu entrego: sentimento e resultado em cada frame.</p>
-    <div class="mt-6"><a href="#portfolio" class="btn btn-primary">Ver portfólio</a></div>
   </div>
 </section>
 
-<!-- PORTFÓLIO -->
 <section id="portfolio" class="max-w-7xl mx-auto py-20 px-4 fade-in">
   <h2 class="text-3xl font-semibold mb-6">🎥 Portfólio</h2>
-  <p class="text-zinc-400 mb-8">Assista aos meus trabalhos diretamente no Instagram.</p>
   <div class="grid md:grid-cols-3 gap-6">
-    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card p-4 hover-glow">
-      <img src="assets/thumb1.jpg" alt="Vídeo 1" class="rounded-xl mb-3">
-      <h3 class="font-semibold">Edição Cinematográfica</h3>
-      <p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p>
-    </a>
-    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card p-4 hover-glow">
-      <img src="assets/thumb2.jpg" alt="Vídeo 2" class="rounded-xl mb-3">
-      <h3 class="font-semibold">Storytelling Emocional</h3>
-      <p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p>
-    </a>
-    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card p-4 hover-glow">
-      <img src="assets/thumb3.jpg" alt="Vídeo 3" class="rounded-xl mb-3">
-      <h3 class="font-semibold">Campanha Visual</h3>
-      <p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p>
-    </a>
+    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card p-4"><img src="assets/thumb1.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Edição Cinematográfica</h3></a>
+    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card p-4"><img src="assets/thumb2.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Storytelling Emocional</h3></a>
+    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card p-4"><img src="assets/thumb3.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Campanha Visual</h3></a>
   </div>
 </section>
 
-<!-- PACOTES -->
-<section id="pacotes" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">💼 Pacotes</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="card p-6 text-center hover-glow">
-      <h3 class="font-semibold mb-2">Básico</h3>
-      <p class="stars mb-2">⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 120</p>
-      <p class="text-zinc-400 text-sm mb-4">Ideal para vídeos curtos e objetivos.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 45s</li><li>2 revisões</li><li>Legendas simples</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
-    </div>
-    <div class="card p-6 text-center hover-glow">
-      <h3 class="font-semibold mb-2">Intermediário</h3>
-      <p class="stars mb-2">⭐⭐⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 350</p>
-      <p class="text-zinc-400 text-sm mb-4">Mais motion e finalização cuidadosa.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo 60–90s</li><li>2 revisões</li><li>Grafismos e lower-thirds</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
-    </div>
-    <div class="card p-6 text-center hover-glow">
-      <h3 class="font-semibold mb-2">Premium</h3>
-      <p class="stars mb-2">⭐⭐⭐⭐⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 1000</p>
-      <p class="text-zinc-400 text-sm mb-4">Acabamento cinematográfico completo.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 2min</li><li>Color grading</li><li>Motion avançado</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
-    </div>
+<section id="faq" class="max-w-7xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-6">💬 Dúvidas Frequentes</h2>
+  <div class="space-y-3">
+    <div class="faq-item"><div class="flex justify-between items-center"><h3>Qual o prazo médio de entrega?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">O prazo varia conforme o projeto, mas normalmente entrego em até 5 dias úteis.</p></div>
+    <div class="faq-item"><div class="flex justify-between items-center"><h3>Posso pedir revisões?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">Sim! Todos os pacotes incluem revisões para garantir o resultado ideal.</p></div>
+    <div class="faq-item"><div class="flex justify-between items-center"><h3>Trabalha com vídeos verticais e horizontais?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">Sim, edito tanto para redes sociais quanto para formatos profissionais.</p></div>
+    <div class="faq-item"><div class="flex justify-between items-center"><h3>Como funciona o pagamento?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">O pagamento pode ser feito via PIX ou transferência, conforme o combinado.</p></div>
   </div>
 </section>
 
-<!-- DEPOIMENTOS -->
-<section id="depoimentos" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">💬 O que falam do meu trabalho</h2>
-  <div class="scroll-h">
-    <div class="card p-4 min-w-[250px]"><strong>Rafael Torres</strong><p class="text-zinc-400 text-sm mt-2">“Trabalho impecável, ritmo e cortes incríveis.”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Laura Martins</strong><p class="text-zinc-400 text-sm mt-2">“Exatamente o que eu precisava, entrega perfeita.”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Beatriz Rocha</strong><p class="text-zinc-400 text-sm mt-2">“Edição de alto nível, super recomendo!”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Pedro Lima</strong><p class="text-zinc-400 text-sm mt-2">“Agilidade e cuidado em cada detalhe.”</p></div>
-  </div>
-</section>
-
-<!-- CONTATO -->
-<section id="contato" class="max-w-7xl mx-auto py-20 px-4 fade-in text-center">
+<section id="contato" class="text-center py-20 fade-in">
   <h2 class="text-3xl font-semibold mb-6">📞 Contato</h2>
-  <p class="text-zinc-400 mb-6">Entre em contato para orçamentos, dúvidas ou parcerias.</p>
-  <p class="text-lg">📱 <strong>(11) 98993-0723</strong></p>
-  <p class="text-lg mb-6">✉️ <strong>arthurvitelbo934@gmail.com</strong></p>
-  <a href="cadastro.html" class="btn btn-primary">Solicitar orçamento</a>
+  <p class="text-zinc-400 mb-6">Entre em contato e vamos criar algo incrível juntos.</p>
+  <a href="https://wa.me/5511989930723" class="btn btn-primary mb-3">Falar no WhatsApp</a><br>
+  <a href="mailto:arthurvitelbo934@gmail.com" class="underline text-zinc-400">arthurvitelbo934@gmail.com</a>
 </section>
 
 <footer class="border-t border-zinc-800 py-8 text-sm text-zinc-500 text-center">
@@ -159,6 +86,9 @@
 </footer>
 
 <script>
+document.querySelectorAll('.faq-item').forEach(item=>{
+  item.addEventListener('click',()=>item.classList.toggle('open'));
+});
 const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
 document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
 </script>
