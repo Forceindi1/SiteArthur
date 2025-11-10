@@ -19,6 +19,10 @@
     .btn-primary:hover { background:#1e4fd0; box-shadow:0 0 12px #2563ebaa }
     header.sticky { position:sticky; top:0; z-index:40; backdrop-filter:blur(8px); background:rgba(11,11,11,.7) }
     .hover-glow:hover { box-shadow:0 0 20px rgba(37,99,235,0.4); }
+    .scroll-h { overflow-x:auto; display:flex; gap:1rem; scrollbar-width:none }
+    .scroll-h::-webkit-scrollbar { display:none }
+    .arrow-down { animation:bounce 1.8s infinite; position:absolute; bottom:25px; left:50%; transform:translateX(-50%) }
+    @keyframes bounce { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,10px)} }
   </style>
 </head>
 <body>
@@ -29,7 +33,7 @@
       <div><strong>Arthur Vitelbo</strong><span class="text-zinc-400"> / Editor Audiovisual</span></div>
     </a>
     <nav class="hidden md:flex gap-6 text-sm text-zinc-300">
-      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#contato">Contato</a>
+      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#depoimentos">Depoimentos</a><a href="#contato">Contato</a>
       <a href="cadastro.html" class="btn btn-primary ml-2">Solicitar orçamento</a>
     </nav>
   </div>
@@ -45,10 +49,13 @@
       <a href="cadastro.html" class="btn btn-primary">Solicitar orçamento</a>
     </div>
   </div>
+  <a href="#sobre" class="arrow-down text-zinc-400 text-3xl">↓</a>
 </section>
 
 <section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
-  <img src="assets/f5f8c214-a5de-4095-8f92-0787ddbcbc22.png" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 animate-slide-left">
+  <a href="https://www.instagram.com/p/DPaLGeOkZ23/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
+    <img src="assets/818d4ccb-cde6-4ea8-98cb-6b5219d97308.png" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover-glow">
+  </a>
   <div>
     <h2 class="text-3xl font-semibold mb-2">Sobre mim</h2>
     <p class="text-zinc-400 leading-relaxed">Sou <strong>Arthur Vitelbo</strong>, editor audiovisual apaixonado por criar histórias que inspiram. Acredito que edição é mais do que cortes — é ritmo, identidade e emoção. Cada vídeo é uma chance de contar algo que o público sinta. E é isso que eu entrego: sentimento e resultado em cada frame.</p>
@@ -82,6 +89,17 @@
     <div class="card p-6 hover-glow"><h3 class="text-lg font-semibold">Básico ⭐</h3><div class="text-3xl font-bold mt-2">R$ 120</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (até 45s)</li><li>• 2 revisões</li><li>• Legendas simples</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
     <div class="card p-6 hover-glow"><h3 class="text-lg font-semibold">Intermediário ⭐⭐⭐</h3><div class="text-3xl font-bold mt-2">R$ 350</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (60–90s)</li><li>• 2 revisões</li><li>• Motion e grafismos</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
     <div class="card p-6 hover-glow"><h3 class="text-lg font-semibold">Premium ⭐⭐⭐⭐⭐</h3><div class="text-3xl font-bold mt-2">R$ 1.000</div><ul class="text-zinc-400 mt-3 text-sm"><li>• 1 vídeo (até 2min)</li><li>• Color grading</li><li>• Motion avançado</li></ul><a href="cadastro.html" class="btn btn-primary mt-6 w-full">Solicitar</a></div>
+  </div>
+</section>
+
+<section id="depoimentos" class="max-w-7xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-2">O que falam do meu trabalho</h2>
+  <p class="text-zinc-400 mb-6">Feedbacks reais — rolagem horizontal.</p>
+  <div class="scroll-h">
+    <div class="card p-5 min-w-[250px]"><strong>Rafael Torres</strong><p class="text-zinc-400 mt-2">“Trabalho impecável, ritmo e cortes incríveis.”</p></div>
+    <div class="card p-5 min-w-[250px]"><strong>Laura Martins</strong><p class="text-zinc-400 mt-2">“Exatamente o que eu precisava, entrega perfeita.”</p></div>
+    <div class="card p-5 min-w-[250px]"><strong>Beatriz Rocha</strong><p class="text-zinc-400 mt-2">“Edição de alto nível, super recomendo!”</p></div>
+    <div class="card p-5 min-w-[250px]"><strong>Pedro Lima</strong><p class="text-zinc-400 mt-2">“Agilidade e cuidado em cada detalhe.”</p></div>
   </div>
 </section>
 
