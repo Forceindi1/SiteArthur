@@ -22,6 +22,9 @@
     .faq-item.open .faq-answer { display:block; }
     .faq-item svg { transition:transform .3s ease; }
     .faq-item.open svg { transform:rotate(180deg); }
+    .stars { color:#2563eb; letter-spacing:2px; }
+    .scroll-h { overflow-x:auto; display:flex; gap:1rem; scrollbar-width:none; }
+    .scroll-h::-webkit-scrollbar { display:none; }
   </style>
 </head>
 <body>
@@ -38,6 +41,7 @@
   </div>
 </header>
 
+<!-- HERO -->
 <section class="text-center py-24 fade-in">
   <h1 class="text-4xl md:text-5xl font-bold mb-4">Edição que impulsiona marcas</h1>
   <p class="text-zinc-400 mb-8">Transformo ideias em vídeos com ritmo, emoção e propósito.</p>
@@ -47,6 +51,7 @@
   </div>
 </section>
 
+<!-- SOBRE MIM -->
 <section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
   <img src="assets/arthur-sobre.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover:scale-105 transition">
   <div>
@@ -55,15 +60,59 @@
   </div>
 </section>
 
+<!-- PORTFÓLIO -->
 <section id="portfolio" class="max-w-7xl mx-auto py-20 px-4 fade-in">
   <h2 class="text-3xl font-semibold mb-6">🎥 Portfólio</h2>
   <div class="grid md:grid-cols-3 gap-6">
-    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card p-4"><img src="assets/thumb1.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Edição Cinematográfica</h3></a>
-    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card p-4"><img src="assets/thumb2.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Storytelling Emocional</h3></a>
-    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card p-4"><img src="assets/thumb3.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Campanha Visual</h3></a>
+    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card p-4"><img src="assets/thumb1.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Edição Cinematográfica</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
+    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card p-4"><img src="assets/thumb2.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Storytelling Emocional</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
+    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card p-4"><img src="assets/thumb3.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Campanha Visual</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
   </div>
 </section>
 
+<!-- PACOTES -->
+<section id="pacotes" class="max-w-7xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-6">💼 Pacotes</h2>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="card p-6 text-center hover:scale-105 transition">
+      <h3 class="font-semibold mb-2">Básico</h3>
+      <p class="stars mb-2">⭐</p>
+      <p class="text-3xl font-bold mb-2">R$ 120</p>
+      <p class="text-zinc-400 text-sm mb-4">Ideal para vídeos curtos e objetivos.</p>
+      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 45s</li><li>2 revisões</li><li>Legendas simples</li></ul>
+      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
+    </div>
+    <div class="card p-6 text-center hover:scale-105 transition">
+      <h3 class="font-semibold mb-2">Intermediário</h3>
+      <p class="stars mb-2">⭐⭐⭐</p>
+      <p class="text-3xl font-bold mb-2">R$ 350</p>
+      <p class="text-zinc-400 text-sm mb-4">Mais motion e finalização cuidadosa.</p>
+      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo 60–90s</li><li>2 revisões</li><li>Grafismos e lower-thirds</li></ul>
+      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
+    </div>
+    <div class="card p-6 text-center hover:scale-105 transition">
+      <h3 class="font-semibold mb-2">Premium</h3>
+      <p class="stars mb-2">⭐⭐⭐⭐⭐</p>
+      <p class="text-3xl font-bold mb-2">R$ 1000</p>
+      <p class="text-zinc-400 text-sm mb-4">Acabamento cinematográfico completo.</p>
+      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 2min</li><li>Color grading</li><li>Motion avançado</li></ul>
+      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOIMENTOS -->
+<section id="depoimentos" class="max-w-7xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-6">💬 O que falam do meu trabalho</h2>
+  <div class="scroll-h">
+    <div class="card p-4 min-w-[250px]"><strong>Rafael Torres</strong><p class="text-zinc-400 text-sm mt-2">“Trabalho impecável, ritmo e cortes incríveis.”</p></div>
+    <div class="card p-4 min-w-[250px]"><strong>Laura Martins</strong><p class="text-zinc-400 text-sm mt-2">“Exatamente o que eu precisava, entrega perfeita.”</p></div>
+    <div class="card p-4 min-w-[250px]"><strong>Beatriz Rocha</strong><p class="text-zinc-400 text-sm mt-2">“Edição de alto nível, super recomendo!”</p></div>
+    <div class="card p-4 min-w-[250px]"><strong>Pedro Lima</strong><p class="text-zinc-400 text-sm mt-2">“Agilidade e cuidado em cada detalhe.”</p></div>
+  </div>
+</section>
+
+<!-- FAQ -->
 <section id="faq" class="max-w-7xl mx-auto py-20 px-4 fade-in">
   <h2 class="text-3xl font-semibold mb-6">💬 Dúvidas Frequentes</h2>
   <div class="space-y-3">
@@ -74,6 +123,7 @@
   </div>
 </section>
 
+<!-- CONTATO -->
 <section id="contato" class="text-center py-20 fade-in">
   <h2 class="text-3xl font-semibold mb-6">📞 Contato</h2>
   <p class="text-zinc-400 mb-6">Entre em contato e vamos criar algo incrível juntos.</p>
