@@ -1,81 +1,14 @@
 <!doctype html>
-<html lang="pt-br">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cadastro — Arthur Vitelbo</title>
-  <meta name="description" content="Cadastre-se e receba uma proposta personalizada de edição. Arthur Vitelbo — Editor que impulsiona marcas.">
-  <link rel="icon" href="assets/favicon.ico" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root { color-scheme: dark }
-    body  { background:#0b0b0b; color:#e7e7e7; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 2.5rem 1.25rem; }
-    .field{width:100%;background:#141414;border:1px solid #262626;border-radius:10px;padding:12px 14px;color:#f5f5f5;margin-bottom:.9rem}
-    .btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:.9rem 1.2rem;font-weight:600;background:#2563eb;color:#fff}
-    .btn:hover{background:#1e4fd0}
-    label{display:block;margin:.35rem 0 .25rem;color:#a1a1aa;font-size:.9rem}
-  </style>
-</head>
-<body>
-  <main class="wrap">
-    <h1 class="text-3xl font-semibold">Solicite seu orçamento</h1>
-    <p class="text-zinc-400 mb-6">Preencha seus dados e receba uma proposta em até 24h úteis.</p>
-
-    <form name="leads" method="POST" action="https://formspree.io/f/mdkpjkdq" class="grid gap-3">
-      <label>Nome completo</label>
-      <input name="nome" class="field" placeholder="Seu nome" required>
-
-      <label>WhatsApp</label>
-      <input name="celular" class="field" placeholder="Seu WhatsApp (com DDD)" required>
-
-      <label>E-mail</label>
-      <input name="email" type="email" class="field" placeholder="Seu e-mail" required>
-
-      <label>Pacote de interesse</label>
-      <select id="pacote" class="field">
-        <option value="">Escolher depois</option>
-        <option value="basico">Básico (a partir de 120)</option>
-        <option value="intermedio">Intermediário</option>
-        <option value="premium">Premium</option>
-      </select>
-
-      <label>Conte um pouco sobre o projeto</label>
-      <textarea name="mensagem" rows="4" class="field" placeholder="Tipo de vídeo, duração, objetivo..."></textarea>
-
-      <!-- campos ocultos -->
-      <input type="hidden" name="_subject" value="Novo lead — Portfólio Arthur Vitelbo">
-      <input type="hidden" id="nextUrl" name="_next" value="https://projeto1-one-lyart.vercel.app/obrigado-lead.html">
-      <input type="text" name="_gotcha" class="hidden" style="display:none">
-
-      <button type="submit" class="btn mt-2">Enviar</button>
-    </form>
-
-    <p class="text-xs text-zinc-500 mt-6">
-      Ao enviar, você concorda em ser contatado(a) por e-mail/WhatsApp para orçar seu projeto.
-    </p>
-  </main>
-
-  <!-- SCRIPT UNIFICADO (pacote + redirect + tracking) -->
-  <script>
-    // elementos
-    const form   = document.querySelector('form[name="leads"]');
-    const pacote = document.getElementById('pacote');
-    const next   = document.getElementById('nextUrl');
-
-    // url absoluta da página de obrigado
-    const baseNext = 'https://projeto1-one-lyart.vercel.app/obrigado-lead.html';
-
-    // antes de enviar
-    form.addEventListener('submit', () => {
-      const p = pacote && pacote.value ? pacote.value : '';
-      next.value = p ? `${baseNext}?p=${encodeURIComponent(p)}` : baseNext;
-
-      // disparos de conversão (se já houver GA4/Pixel na página)
-      if (typeof gtag === 'function') gtag('event', 'generate_lead', { method: 'form', package: p || 'na' });
-      if (typeof fbq  === 'function') fbq('track', 'Lead', { package: p || 'na' });
-    });
-  </script>
-</body>
-</html>
-
+<html lang="pt-br"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cadastro — Arthur Vitelbo</title><script src="https://cdn.tailwindcss.com"></script>
+<style>:root{color-scheme:dark}body{background:#0b0b0b;color:#e7e7e7;font-family:Inter,system-ui,sans-serif}.wrap{max-width:720px;margin:0 auto;padding:2.5rem 1.25rem}.field{width:100%;background:#141414;border:1px solid #262626;border-radius:10px;padding:12px 14px;color:#f5f5f5;margin-bottom:.9rem}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;padding:.9rem 1.2rem;font-weight:600;background:#2563eb;color:#fff}</style></head>
+<body><main class="wrap"><h1 class="text-3xl font-semibold">Solicite seu orçamento</h1>
+<p class="text-zinc-400 mb-6">Preencha seus dados e receba uma proposta em até 24h úteis.</p>
+<form name="leads" method="POST" action="https://formspree.io/f/mdkpjkdq" class="grid gap-3">
+<label>Nome completo</label><input name="nome" class="field" required placeholder="Seu nome">
+<label>WhatsApp</label><input name="celular" class="field" required placeholder="Seu WhatsApp (com DDD)">
+<label>E-mail</label><input name="email" type="email" class="field" required placeholder="Seu e-mail">
+<label>Pacote de interesse</label><select id="pacote" class="field"><option value="">Escolher depois</option><option value="basico">Básico (R$ 120)</option><option value="intermedio">Intermediário (R$ 350)</option><option value="premium">Premium (R$ 1.000)</option></select>
+<label>Conte um pouco sobre o projeto</label><textarea name="mensagem" rows="4" class="field" placeholder="Tipo de vídeo, duração, objetivo..."></textarea>
+<input type="hidden" name="_subject" value="Novo lead — Portfólio Arthur Vitelbo"><input type="hidden" id="nextUrl" name="_next" value="https://arthurvitelbo.com.br/obrigado-lead.html">
+<button type="submit" class="btn mt-2">Enviar</button></form></main></body></html>
