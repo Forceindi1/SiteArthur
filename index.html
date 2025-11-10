@@ -10,7 +10,7 @@
   <style>
     :root { color-scheme: dark; scroll-behavior: smooth }
     body { background:#0b0b0b; color:#e7e7e7; font-family:Inter,system-ui,sans-serif; overflow-x:hidden }
-    .fade-in { opacity:0; transform:translateY(30px); transition:opacity .8s ease, transform .8s ease }
+    .fade-in { opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease }
     .fade-in.visible { opacity:1; transform:translateY(0) }
     .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .4s ease }
     .card:hover { transform:translateY(-6px) scale(1.02) }
@@ -23,13 +23,16 @@
     .scroll-h::-webkit-scrollbar { display:none }
     .arrow-down { animation:bounce 1.8s infinite; position:absolute; bottom:25px; left:50%; transform:translateX(-50%) }
     @keyframes bounce { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,10px)} }
+    .profile-photo { width:42px; height:42px; border-radius:50%; border:2px solid #2563eb; box-shadow:0 0 10px rgba(37,99,235,0.4); transition:transform .4s ease, box-shadow .4s ease; opacity:0; animation:fadeInPhoto 1.2s forwards }
+    .profile-photo:hover { transform:scale(1.05); box-shadow:0 0 18px rgba(37,99,235,0.6); }
+    @keyframes fadeInPhoto { from {opacity:0; transform:scale(0.9);} to {opacity:1; transform:scale(1);} }
   </style>
 </head>
 <body>
 <header class="sticky">
   <div class="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
-    <a href="#top" class="flex items-center gap-2">
-      <div class="w-9 h-9 bg-zinc-800 rounded-xl flex items-center justify-center text-white font-bold text-lg">AV</div>
+    <a href="#sobre" class="flex items-center gap-3">
+      <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="profile-photo">
       <div><strong>Arthur Vitelbo</strong><span class="text-zinc-400"> / Editor Audiovisual</span></div>
     </a>
     <nav class="hidden md:flex gap-6 text-sm text-zinc-300">
@@ -54,7 +57,7 @@
 
 <section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
   <a href="https://www.instagram.com/p/DPaLGeOkZ23/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank">
-    <img src="assets/5660c55f-3cc6-4b24-916d-a139ba0d16b1.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover-glow">
+    <img src="assets/A_digital_photograph_serves_as_a_profile_portrait_.png" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover-glow">
   </a>
   <div>
     <h2 class="text-3xl font-semibold mb-2">Sobre mim</h2>
