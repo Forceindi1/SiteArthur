@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Área do Cliente - Arthur Vitelbo</title>
+    <title>Área do Cliente</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -14,44 +14,47 @@
         .status-aceito { color: #60a5fa; background: #172554; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
         .status-em_andamento { color: #c084fc; background: #3b0764; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
         .status-finalizado { color: #4ade80; background: #052e16; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
-        .status-rejeitado { color: #f87171; background: #450a0a; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
         
-        /* Loading Spinner */
-        .loader { border: 4px solid #333; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display:none; margin: 10px auto; }
+        /* Spinner de Carregamento */
+        .loader { border: 4px solid #333; border-top: 4px solid #3b82f6; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display:none; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="flex">
+<body class="flex flex-col md:flex-row">
 
-    <aside class="sidebar w-64 p-6 hidden md:block">
-        <div class="flex items-center gap-3 mb-10">
-            <img src="assets/header_profile.jpg" class="w-10 h-10 rounded-full border border-blue-600">
-            <div>
-                <p class="font-bold text-sm" id="user-name">Carregando...</p>
-                <p class="text-xs text-zinc-500">Cliente</p>
+    <aside class="sidebar w-full md:w-64 p-6 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center gap-3 mb-10">
+                <img src="https://ui-avatars.com/api/?name=User&background=random" id="sidebar-avatar" class="w-12 h-12 rounded-full border border-blue-600 object-cover">
+                <div>
+                    <p class="font-bold text-sm truncate w-32" id="user-name">Carregando...</p>
+                    <p class="text-xs text-zinc-500">Cliente</p>
+                </div>
             </div>
+            <nav class="space-y-2">
+                <button onclick="mostrarAba('novo')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-plus-circle w-5"></i> Novo Pedido</button>
+                <button onclick="mostrarAba('pedidos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-list w-5"></i> Meus Pedidos</button>
+                <button onclick="mostrarAba('perfil')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-user-cog w-5"></i> Meu Perfil</button>
+            </nav>
         </div>
-        <nav class="space-y-4">
-            <button onclick="mostrarAba('novo')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3"><i class="fas fa-plus-circle"></i> Novo Pedido</button>
-            <button onclick="mostrarAba('pedidos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3"><i class="fas fa-list"></i> Meus Pedidos</button>
-            <button onclick="sair()" class="w-full text-left p-3 rounded hover:bg-red-900/20 text-red-400 flex items-center gap-3 mt-10"><i class="fas fa-sign-out-alt"></i> Sair</button>
-        </nav>
+        
+        <button onclick="sair()" class="w-full text-left p-3 rounded hover:bg-red-900/20 text-red-400 flex items-center gap-3 mt-4 md:mt-0 transition"><i class="fas fa-sign-out-alt"></i> Sair</button>
     </aside>
 
-    <main class="flex-1 p-8">
+    <main class="flex-1 p-4 md:p-8 overflow-y-auto h-screen">
         
         <section id="aba-novo" class="max-w-3xl mx-auto fade-in">
             <h1 class="text-3xl font-bold mb-6">Solicitar Edição</h1>
             <div class="card p-8">
                 <form id="form-pedido">
                     <label class="block text-zinc-400 text-sm mb-2">Título do Vídeo (Ideia Principal)</label>
-                    <input type="text" id="titulo" required class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white">
+                    <input type="text" id="titulo" required class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white transition">
 
-                    <label class="block text-zinc-400 text-sm mb-2">Descrição Detalhada (Referências, estilo, músicas)</label>
-                    <textarea id="descricao" rows="4" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white"></textarea>
+                    <label class="block text-zinc-400 text-sm mb-2">Descrição Detalhada</label>
+                    <textarea id="descricao" rows="4" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white transition"></textarea>
 
                     <label class="block text-zinc-400 text-sm mb-2">Upload do Vídeo Bruto</label>
-                    <div class="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer relative">
+                    <div class="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer relative bg-zinc-900/50">
                         <input type="file" id="arquivo-video" accept="video/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                         <i class="fas fa-cloud-upload-alt text-3xl text-zinc-500 mb-2"></i>
                         <p class="text-zinc-400 text-sm" id="file-name">Arraste ou clique para selecionar</p>
@@ -59,7 +62,7 @@
 
                     <div class="loader" id="loading-upload"></div>
 
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg mt-6 transition">Enviar Pedido</button>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg mt-6 transition shadow-lg shadow-blue-900/20">Enviar Pedido</button>
                 </form>
             </div>
         </section>
@@ -71,28 +74,68 @@
             </div>
         </section>
 
+        <section id="aba-perfil" class="max-w-2xl mx-auto hidden">
+            <h1 class="text-3xl font-bold mb-6">Editar Perfil</h1>
+            <div class="card p-8">
+                <div class="flex flex-col items-center mb-8">
+                    <div class="relative group cursor-pointer">
+                        <img src="https://ui-avatars.com/api/?name=User" id="preview-avatar" class="w-32 h-32 rounded-full object-cover border-4 border-zinc-800 shadow-xl group-hover:opacity-50 transition">
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <i class="fas fa-camera text-2xl text-white"></i>
+                        </div>
+                        <input type="file" id="input-avatar" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    </div>
+                    <p class="text-sm text-zinc-500 mt-3">Clique na foto para alterar</p>
+                </div>
+
+                <form id="form-perfil" class="space-y-4">
+                    <div>
+                        <label class="block text-zinc-400 text-sm mb-1">Seu Nome</label>
+                        <input type="text" id="perfil-nome" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 text-sm mb-1">WhatsApp</label>
+                        <input type="text" id="perfil-whatsapp" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white focus:border-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-zinc-400 text-sm mb-1">E-mail (Não alterável)</label>
+                        <input type="text" id="perfil-email" disabled class="w-full bg-zinc-900/50 border border-zinc-800 rounded p-3 text-zinc-500 cursor-not-allowed">
+                    </div>
+
+                    <div class="loader" id="loading-perfil"></div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-green-900/20">Salvar Alterações</button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-cliente.js"></script>
-
-    <script>
-        // Lógica simples de abas
+    <script src="script-cliente.js?v=6"></script> <script>
+        // Lógica de abas
         function mostrarAba(aba) {
-            document.getElementById('aba-novo').classList.add('hidden');
-            document.getElementById('aba-pedidos').classList.add('hidden');
+            document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
             
-            if(aba === 'pedidos') {
-                carregarPedidos(); // Recarrega a lista quando clica na aba
-            }
+            if(aba === 'pedidos') carregarPedidos();
+            // Se for perfil, a gente já carrega os dados no inicio, mas pode recarregar se quiser
         }
 
-        // Mostrar nome do arquivo selecionado
+        // Mostrar nome do arquivo de vídeo selecionado
         document.getElementById('arquivo-video').addEventListener('change', function(){
             const nome = this.files[0] ? this.files[0].name : "Arraste ou clique para selecionar";
             document.getElementById('file-name').innerText = nome;
             document.getElementById('file-name').classList.add('text-blue-400');
+        });
+
+        // Preview da foto de perfil antes de salvar
+        document.getElementById('input-avatar').addEventListener('change', function(e){
+            const file = e.target.files[0];
+            if(file){
+                const reader = new FileReader();
+                reader.onload = function(e) { document.getElementById('preview-avatar').src = e.target.result; }
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 </body>
