@@ -1,9 +1,9 @@
 // --- CONFIGURAÇÃO BLINDADA ---
 // O .trim() garante que não haja espaços antes ou depois do link
-const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co'.trim();
+const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
 
 // COLE SUA KEY AQUI DENTRO (Mantenha o .trim() no final)
-const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'.trim();
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
 // Console Log para Debug (Vai aparecer no seu F12 se der erro)
 console.log("Tentando conectar no Supabase com:", supabaseUrl);
