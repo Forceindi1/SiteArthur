@@ -6,141 +6,156 @@
   <title>Arthur Vitelbo — Editor Audiovisual</title>
   <link rel="icon" href="assets/favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  
   <style>
     :root { color-scheme: dark; scroll-behavior: smooth }
     body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; overflow-x:hidden }
     .fade-in { opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease }
     .fade-in.visible { opacity:1; transform:translateY(0) }
     .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .4s ease }
-    .card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 0 20px rgba(37,99,235,0.25) }
+    /* Ajuste para os vídeos no carrossel */
+    .swiper-slide video { width: 100%; border-radius: 20px; border: 1px solid #333; }
+    .swiper-button-next, .swiper-button-prev { color: #2563eb; } /* Cor das setinhas */
     .btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.4rem; border-radius:12px; font-weight:600; transition:all .3s }
     .btn-primary { background:#2563eb; color:#fff }
     .btn-primary:hover { background:#1e4fd0; box-shadow:0 0 12px #2563ebaa }
     .faq-item { cursor:pointer; border:1px solid #232323; border-radius:14px; background:#121212; padding:1rem; transition:all .3s ease; }
-    .faq-item:hover { box-shadow:0 0 10px rgba(37,99,235,0.3); }
     .faq-answer { display:none; margin-top:.5rem; color:#aaa; }
     .faq-item.open .faq-answer { display:block; }
-    .faq-item svg { transition:transform .3s ease; }
-    .faq-item.open svg { transform:rotate(180deg); }
-    .stars { color:#2563eb; letter-spacing:2px; }
-    .scroll-h { overflow-x:auto; display:flex; gap:1rem; scrollbar-width:none; }
-    .scroll-h::-webkit-scrollbar { display:none; }
   </style>
 </head>
 <body>
+
 <header class="sticky top-0 backdrop-blur-md bg-black/60 z-40">
   <div class="max-w-7xl mx-auto flex items-center justify-between py-3 px-4">
     <a href="#sobre" class="flex items-center gap-3">
       <img src="assets/header_profile.jpg" alt="Arthur Vitelbo" class="w-10 h-10 rounded-full border-2 border-blue-500 shadow">
       <div><strong>Arthur Vitelbo</strong><span class="text-zinc-400"> / Editor Audiovisual</span></div>
     </a>
-    <nav class="hidden md:flex gap-6 text-sm text-zinc-300">
-      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#depoimentos">Depoimentos</a><a href="#faq">FAQ</a><a href="#contato">Contato</a>
+    <nav class="hidden md:flex gap-6 text-sm text-zinc-300 items-center">
+      <a href="#sobre">Sobre</a><a href="#portfolio">Portfólio</a><a href="#pacotes">Pacotes</a><a href="#depoimentos">Depoimentos</a>
+      <a href="login.html" class="text-white hover:text-blue-500">Já sou cliente</a>
       <a href="cadastro.html" class="btn btn-primary ml-2">Solicitar orçamento</a>
     </nav>
   </div>
 </header>
 
-<!-- HERO -->
 <section class="text-center py-24 fade-in">
   <h1 class="text-4xl md:text-5xl font-bold mb-4">Edição que impulsiona marcas</h1>
   <p class="text-zinc-400 mb-8">Transformo ideias em vídeos com ritmo, emoção e propósito.</p>
   <div class="flex justify-center gap-4">
-    <a href="#portfolio" class="btn border border-zinc-600 text-white">Ver trabalhos</a>
-    <a href="cadastro.html" class="btn btn-primary">Solicitar orçamento</a>
+    <a href="#portfolio" class="btn border border-zinc-600 text-white">Ver portfólio</a>
+    <a href="cadastro.html" class="btn btn-primary">Começar agora</a>
   </div>
 </section>
 
-<!-- SOBRE MIM -->
-<section id="sobre" class="max-w-7xl mx-auto py-20 px-4 flex flex-col md:flex-row items-center gap-10 fade-in">
-  <img src="assets/arthur-sobre.jpg" alt="Arthur Vitelbo" class="w-64 h-64 object-cover rounded-2xl border border-zinc-700 shadow-lg hover:scale-105 transition">
-  <div>
-    <h2 class="text-3xl font-semibold mb-2">Sobre mim</h2>
-    <p class="text-zinc-400 leading-relaxed">Sou <strong>Arthur Vitelbo</strong>, editor audiovisual apaixonado por criar histórias que inspiram. Acredito que edição é mais do que cortes — é ritmo, identidade e emoção. Cada vídeo é uma chance de contar algo que o público sinta. E é isso que eu entrego: sentimento e resultado em cada frame.</p>
-  </div>
-</section>
-
-<!-- PORTFÓLIO -->
-<section id="portfolio" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">🎥 Portfólio</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    <a href="https://www.instagram.com/p/DQ4LKZkij57" target="_blank" class="card p-4"><img src="assets/thumb1.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Edição Cinematográfica</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
-    <a href="https://www.instagram.com/p/DQwh9uditC3" target="_blank" class="card p-4"><img src="assets/thumb2.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Storytelling Emocional</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
-    <a href="https://www.instagram.com/p/DQkDRZkip37" target="_blank" class="card p-4"><img src="assets/thumb3.jpg" class="rounded-xl mb-3"><h3 class="font-semibold">Campanha Visual</h3><p class="text-zinc-400 text-sm">Clique para assistir no Instagram</p></a>
-  </div>
-</section>
-
-<!-- PACOTES -->
-<section id="pacotes" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">💼 Pacotes</h2>
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="card p-6 text-center hover:scale-105 transition">
-      <h3 class="font-semibold mb-2">Básico</h3>
-      <p class="stars mb-2">⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 120</p>
-      <p class="text-zinc-400 text-sm mb-4">Ideal para vídeos curtos e objetivos.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 45s</li><li>2 revisões</li><li>Legendas simples</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
+<section id="portfolio" class="max-w-5xl mx-auto py-20 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-6 text-center">🎥 Portfólio Recente</h2>
+  
+  <div class="swiper myVideosSwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+         <video controls poster="assets/thumb1.jpg"><source src="assets/video1.mp4" type="video/mp4"></video>
+         <p class="text-center mt-2 text-zinc-400">Edição Cinematográfica</p>
+      </div>
+      <div class="swiper-slide">
+         <video controls poster="assets/thumb2.jpg"><source src="assets/video2.mp4" type="video/mp4"></video>
+         <p class="text-center mt-2 text-zinc-400">Storytelling Emocional</p>
+      </div>
+      <div class="swiper-slide">
+         <video controls poster="assets/thumb3.jpg"><source src="assets/video3.mp4" type="video/mp4"></video>
+         <p class="text-center mt-2 text-zinc-400">Reels Dinâmico</p>
+      </div>
     </div>
-    <div class="card p-6 text-center hover:scale-105 transition">
-      <h3 class="font-semibold mb-2">Intermediário</h3>
-      <p class="stars mb-2">⭐⭐⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 350</p>
-      <p class="text-zinc-400 text-sm mb-4">Mais motion e finalização cuidadosa.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo 60–90s</li><li>2 revisões</li><li>Grafismos e lower-thirds</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+  </div>
+</section>
+
+<section id="depoimentos" class="max-w-4xl mx-auto py-10 px-4 fade-in">
+  <h2 class="text-3xl font-semibold mb-6 text-center">💬 Comentários</h2>
+  
+  <div class="swiper myCommentsSwiper">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <div class="card p-8 text-center">
+            <h3 class="font-bold text-xl">Rafael Torres</h3>
+            <p class="text-zinc-400 mt-2">“Trabalho impecável, ritmo e cortes incríveis. O Arthur entendeu exatamente a vibe.”</p>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card p-8 text-center">
+            <h3 class="font-bold text-xl">Laura Martins</h3>
+            <p class="text-zinc-400 mt-2">“Entrega super rápida e qualidade de cinema. Recomendo demais!”</p>
+        </div>
+      </div>
+      <div class="swiper-slide">
+        <div class="card p-8 text-center">
+            <h3 class="font-bold text-xl">Beatriz Rocha</h3>
+            <p class="text-zinc-400 mt-2">“A edição salvou meu lançamento. Profissionalismo puro.”</p>
+        </div>
+      </div>
     </div>
-    <div class="card p-6 text-center hover:scale-105 transition">
-      <h3 class="font-semibold mb-2">Premium</h3>
-      <p class="stars mb-2">⭐⭐⭐⭐⭐</p>
-      <p class="text-3xl font-bold mb-2">R$ 1000</p>
-      <p class="text-zinc-400 text-sm mb-4">Acabamento cinematográfico completo.</p>
-      <ul class="text-zinc-500 text-sm mb-4"><li>1 vídeo até 2min</li><li>Color grading</li><li>Motion avançado</li></ul>
-      <a href="cadastro.html" class="btn btn-primary">Solicitar</a>
-    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
   </div>
 </section>
 
-<!-- DEPOIMENTOS -->
-<section id="depoimentos" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">💬 O que falam do meu trabalho</h2>
-  <div class="scroll-h">
-    <div class="card p-4 min-w-[250px]"><strong>Rafael Torres</strong><p class="text-zinc-400 text-sm mt-2">“Trabalho impecável, ritmo e cortes incríveis.”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Laura Martins</strong><p class="text-zinc-400 text-sm mt-2">“Exatamente o que eu precisava, entrega perfeita.”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Beatriz Rocha</strong><p class="text-zinc-400 text-sm mt-2">“Edição de alto nível, super recomendo!”</p></div>
-    <div class="card p-4 min-w-[250px]"><strong>Pedro Lima</strong><p class="text-zinc-400 text-sm mt-2">“Agilidade e cuidado em cada detalhe.”</p></div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq" class="max-w-7xl mx-auto py-20 px-4 fade-in">
-  <h2 class="text-3xl font-semibold mb-6">💬 Dúvidas Frequentes</h2>
-  <div class="space-y-3">
-    <div class="faq-item"><div class="flex justify-between items-center"><h3>Qual o prazo médio de entrega?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">O prazo varia conforme o projeto, mas normalmente entrego em até 5 dias úteis.</p></div>
-    <div class="faq-item"><div class="flex justify-between items-center"><h3>Posso pedir revisões?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">Sim! Todos os pacotes incluem revisões para garantir o resultado ideal.</p></div>
-    <div class="faq-item"><div class="flex justify-between items-center"><h3>Trabalha com vídeos verticais e horizontais?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">Sim, edito tanto para redes sociais quanto para formatos profissionais.</p></div>
-    <div class="faq-item"><div class="flex justify-between items-center"><h3>Como funciona o pagamento?</h3><svg width="20" height="20" fill="none" stroke="currentColor"><path d="M6 9l6 6 6-6"/></svg></div><p class="faq-answer">O pagamento pode ser feito via PIX ou transferência, conforme o combinado.</p></div>
-  </div>
-</section>
-
-<!-- CONTATO -->
-<section id="contato" class="text-center py-20 fade-in">
+<section id="contato" class="text-center py-20 fade-in border-t border-zinc-800">
   <h2 class="text-3xl font-semibold mb-6">📞 Contato</h2>
   <p class="text-zinc-400 mb-6">Entre em contato e vamos criar algo incrível juntos.</p>
-  <a href="https://wa.me/5511989930723" class="btn btn-primary mb-3">Falar no WhatsApp</a><br>
-  <a href="mailto:arthurvitelbo934@gmail.com" class="underline text-zinc-400">arthurvitelbo934@gmail.com</a>
+  <a href="https://wa.me/5511989930723" class="btn btn-primary mb-3">WhatsApp: (11) 98993-0723</a><br>
+  <p class="text-zinc-500 mt-4">Suzano - SP | arthurvitelbo934@gmail.com</p>
+
+  <div class="mt-12 p-6 border border-zinc-800 rounded-xl inline-block">
+      <h4 class="text-sm font-bold text-zinc-500 mb-2 uppercase tracking-widest">Área Interna</h4>
+      <input type="email" id="staff-email" placeholder="Email corporativo" class="bg-zinc-900 border border-zinc-700 text-white p-2 rounded text-sm mb-2 w-full">
+      <input type="password" id="staff-password" placeholder="Senha" class="bg-zinc-900 border border-zinc-700 text-white p-2 rounded text-sm mb-2 w-full">
+      <button id="btn-staff-login" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white p-2 rounded text-sm font-bold transition">Acessar Sistema</button>
+  </div>
 </section>
 
-<footer class="border-t border-zinc-800 py-8 text-sm text-zinc-500 text-center">
-  © 2025 Arthur Vitelbo — Todos os direitos reservados.
+<footer class="border-t border-zinc-900 py-8 text-sm text-zinc-600 text-center">
+  © 2026 Arthur Vitelbo — Todos os direitos reservados.
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script src="script-auth.js"></script>
+
 <script>
-document.querySelectorAll('.faq-item').forEach(item=>{
-  item.addEventListener('click',()=>item.classList.toggle('open'));
-});
-const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
-document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+    // Configuração do Carrossel de Vídeos
+    const swiperVideos = new Swiper(".myVideosSwiper", {
+        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+        loop: true,
+        spaceBetween: 30,
+    });
+
+    // Configuração do Carrossel de Comentários
+    const swiperComments = new Swiper(".myCommentsSwiper", {
+        navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
+        loop: true,
+        autoplay: { delay: 5000 }, // Passa sozinho a cada 5 segundos
+    });
+
+    // Animação de entrada (Fade In)
+    const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
+    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+    
+    // Lógica rápida para o Login de Funcionário na Home (apenas chama a função do script-auth.js)
+    document.getElementById('btn-staff-login').addEventListener('click', async () => {
+        const email = document.getElementById('staff-email').value;
+        const pass = document.getElementById('staff-password').value;
+        // Chama a função que criamos no script-auth.js
+        if(window.fazerLogin) {
+            await window.fazerLogin(email, pass);
+        } else {
+            alert("Erro: script-auth.js não carregado.");
+        }
+    });
 </script>
+
 </body>
 </html>
