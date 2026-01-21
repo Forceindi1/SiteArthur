@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Cliente - Arthur Vitelbo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; }
+        .sidebar { background:#121212; border-right:1px solid #232323; min-height:100vh; }
+        .card { background:#161616; border:1px solid #2a2a2a; border-radius:16px; }
+        .status-pendente { color: #fbbf24; background: #451a03; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
+        .status-aceito { color: #60a5fa; background: #172554; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
+        .status-em_andamento { color: #c084fc; background: #3b0764; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
+        .status-finalizado { color: #4ade80; background: #052e16; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
+        .status-rejeitado { color: #f87171; background: #450a0a; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
+        
+        /* Loading Spinner */
+        .loader { border: 4px solid #333; border-top: 4px solid #3498db; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display:none; margin: 10px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="flex">
+
+    <aside class="sidebar w-64 p-6 hidden md:block">
+        <div class="flex items-center gap-3 mb-10">
+            <img src="assets/header_profile.jpg" class="w-10 h-10 rounded-full border border-blue-600">
+            <div>
+                <p class="font-bold text-sm" id="user-name">Carregando...</p>
+                <p class="text-xs text-zinc-500">Cliente</p>
+            </div>
+        </div>
+        <nav class="space-y-4">
+            <button onclick="mostrarAba('novo')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3"><i class="fas fa-plus-circle"></i> Novo Pedido</button>
+            <button onclick="mostrarAba('pedidos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3"><i class="fas fa-list"></i> Meus Pedidos</button>
+            <button onclick="sair()" class="w-full text-left p-3 rounded hover:bg-red-900/20 text-red-400 flex items-center gap-3 mt-10"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-8">
+        
+        <section id="aba-novo" class="max-w-3xl mx-auto fade-in">
+            <h1 class="text-3xl font-bold mb-6">Solicitar Edição</h1>
+            <div class="card p-8">
+                <form id="form-pedido">
+                    <label class="block text-zinc-400 text-sm mb-2">Título do Vídeo (Ideia Principal)</label>
+                    <input type="text" id="titulo" required class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white">
+
+                    <label class="block text-zinc-400 text-sm mb-2">Descrição Detalhada (Referências, estilo, músicas)</label>
+                    <textarea id="descricao" rows="4" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white"></textarea>
+
+                    <label class="block text-zinc-400 text-sm mb-2">Upload do Vídeo Bruto</label>
+                    <div class="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer relative">
+                        <input type="file" id="arquivo-video" accept="video/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-3xl text-zinc-500 mb-2"></i>
+                        <p class="text-zinc-400 text-sm" id="file-name">Arraste ou clique para selecionar</p>
+                    </div>
+
+                    <div class="loader" id="loading-upload"></div>
+
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg mt-6 transition">Enviar Pedido</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="aba-pedidos" class="max-w-5xl mx-auto hidden">
+            <h1 class="text-3xl font-bold mb-6">Histórico de Pedidos</h1>
+            <div class="grid gap-4" id="lista-pedidos">
+                <p class="text-zinc-500">Carregando seus pedidos...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script-cliente.js"></script>
+
+    <script>
+        // Lógica simples de abas
+        function mostrarAba(aba) {
+            document.getElementById('aba-novo').classList.add('hidden');
+            document.getElementById('aba-pedidos').classList.add('hidden');
+            document.getElementById('aba-' + aba).classList.remove('hidden');
+            
+            if(aba === 'pedidos') {
+                carregarPedidos(); // Recarrega a lista quando clica na aba
+            }
+        }
+
+        // Mostrar nome do arquivo selecionado
+        document.getElementById('arquivo-video').addEventListener('change', function(){
+            const nome = this.files[0] ? this.files[0].name : "Arraste ou clique para selecionar";
+            document.getElementById('file-name').innerText = nome;
+            document.getElementById('file-name').classList.add('text-blue-400');
+        });
+    </script>
+</body>
+</html>
