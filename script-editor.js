@@ -2,34 +2,35 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT EDITOR V3.0 (MANUAL JOIN) - CARREGADO");
+console.log("SCRIPT V3.0 (JOIN MANUAL) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
-let todosPerfis = []; // Vamos guardar os nomes aqui
+let listaDeClientes = []; // Vamos guardar os clientes aqui
 
 window.onload = async () => {
+    // 1. Verifica Login
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = "login.html"; return; }
     editorAtual = user;
 
-    // 1. PRIMEIRO: Baixa a lista de TODOS os clientes (Nome, Zap, Email)
-    // Isso evita o erro de conexão do banco de dados
-    const { data: perfis, error: errPerfis } = await supabaseClient
+    // 2. BUSCA TODOS OS CLIENTES (Para sabermos os nomes/zaps)
+    // Fazemos isso separado para não travar a busca de pedidos
+    const { data: perfis, error: erroPerfis } = await supabaseClient
         .from('profiles')
         .select('*');
     
-    if(perfis) todosPerfis = perfis;
+    if(perfis) listaDeClientes = perfis;
 
     // Coloca o nome do editor no topo
-    const meuPerfil = todosPerfis.find(p => p.id === user.id);
+    const meuPerfil = listaDeClientes.find(p => p.id === user.id);
     if(meuPerfil) document.getElementById('editor-nome').innerText = meuPerfil.nome;
     
     carregarPainel();
 };
 
 async function carregarPainel() {
-    // 2. SEGUNDO: Baixa apenas os pedidos (sem tentar juntar tabelas)
+    // 3. BUSCA OS PEDIDOS (Sem tentar misturar tabelas no banco)
     const { data: pedidos, error } = await supabaseClient
         .from('orders')
         .select('*')
@@ -40,7 +41,7 @@ async function carregarPainel() {
         return;
     }
 
-    // Separa os pedidos
+    // Separa o que é Novo do que é Meu
     const pendentes = pedidos.filter(p => p.status === 'pendente');
     const meus = pedidos.filter(p => p.editor_id === editorAtual.id && (p.status === 'em_andamento' || p.status === 'aceito'));
 
@@ -48,12 +49,13 @@ async function carregarPainel() {
     renderizarMeus(meus);
 }
 
-// FUNÇÃO AUXILIAR: Encontra o cliente na lista que baixamos
-function getCliente(id) {
-    return todosPerfis.find(p => p.id === id) || { nome: 'Desconhecido', whatsapp: '', email: '' };
+// FUNÇÃO MÁGICA: Encontra o dono do pedido na nossa lista
+function getDadosCliente(idDoCliente) {
+    const cliente = listaDeClientes.find(p => p.id === idDoCliente);
+    return cliente || { nome: 'Desconhecido', whatsapp: '', email: '' };
 }
 
-// RENDERIZA LISTA DE DISPONÍVEIS
+// RENDERIZA PEDIDOS DISPONÍVEIS
 function renderizarPendentes(lista) {
     const container = document.getElementById('lista-pendentes');
     const contador = document.getElementById('count-pendentes');
@@ -65,7 +67,8 @@ function renderizarPendentes(lista) {
     }
 
     container.innerHTML = lista.map(pedido => {
-        const cliente = getCliente(pedido.client_id); // Pega o nome manualmente
+        // Usa a função mágica para pegar o nome
+        const cliente = getDadosCliente(pedido.client_id);
         
         return `
         <div class="card p-4 mb-4 border border-zinc-800 bg-[#161616] rounded-xl">
@@ -85,7 +88,7 @@ function renderizarPendentes(lista) {
     `}).join('');
 }
 
-// RENDERIZA LISTA DE MINHAS TAREFAS
+// RENDERIZA MINHAS TAREFAS (Com Contato e Prazo)
 function renderizarMeus(lista) {
     const container = document.getElementById('lista-minhas');
     
@@ -95,11 +98,13 @@ function renderizarMeus(lista) {
     }
 
     container.innerHTML = lista.map(pedido => {
-        const cliente = getCliente(pedido.client_id);
+        const cliente = getDadosCliente(pedido.client_id);
         
-        // Formata WhatsApp
+        // Arruma o Link do WhatsApp
         const zapLimpo = cliente.whatsapp ? cliente.whatsapp.replace(/[^0-9]/g, '') : '';
         const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
+        
+        // Data do Prazo
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
 
         return `
@@ -116,8 +121,8 @@ function renderizarMeus(lista) {
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs">👤</div>
                     <div>
-                        <p class="text-sm font-bold text-white">${cliente.nome || 'Sem Nome'}</p>
-                        <p class="text-xs text-zinc-500">${cliente.email || 'Sem Email'}</p>
+                        <p class="text-sm font-bold text-white">${cliente.nome}</p>
+                        <p class="text-xs text-zinc-500">${cliente.email}</p>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-2">
@@ -143,13 +148,13 @@ function renderizarMeus(lista) {
     `}).join('');
 }
 
-// --- FUNÇÕES DE AÇÃO (IGUAIS A ANTES) ---
+// --- FUNÇÕES DE AÇÃO (As mesmas de antes) ---
 
 async function atualizarPrazo(id, novaData) {
     if(!novaData) return;
     const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
     if(error) alert("Erro: " + error.message);
-    else alert("Prazo Salvo!");
+    else alert("Prazo salvo!");
 }
 
 async function aceitarTarefa(id) {
@@ -165,10 +170,10 @@ async function abandonarTarefa(id) {
 }
 
 async function finalizarTarefa(id) {
-    const linkPronto = prompt("Cole o link do vídeo finalizado:");
+    const linkPronto = prompt("Link do vídeo pronto (Drive/WeTransfer):");
     if(!linkPronto) return;
     const { error } = await supabaseClient.from('orders').update({ status: 'finalizado', data_conclusao: new Date() }).eq('id', id);
-    if(!error) { alert("Pedido entregue!"); carregarPainel(); }
+    if(!error) { alert("Entregue!"); carregarPainel(); }
 }
 
 async function sair() {
