@@ -1,6 +1,6 @@
 // --- CONFIGURAÇÃO ---
-const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co';
-const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
+const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
