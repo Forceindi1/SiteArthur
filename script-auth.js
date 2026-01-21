@@ -1,15 +1,13 @@
 // --- CONFIGURAÇÃO ---
-// Esta é a URL que vi no seu print (mantenha as aspas simples)
+// URL e KEY do Supabase (Mantenha as aspas)
 const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co';
-
-// ⚠️ ATENÇÃO: Apague o texto abaixo e cole a sua "anon public key" do Supabase dentro das aspas
-const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
-
-// Cria a conexão (Não mude nada abaixo)
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
+// Inicializa o cliente do Supabase
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- FUNÇÃO DE CADASTRO (CLIENTE) ---
 async function registrarUsuario(email, password, nome, whatsapp) {
+    // 1. Cria o usuário na autenticação
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
@@ -20,6 +18,7 @@ async function registrarUsuario(email, password, nome, whatsapp) {
         return;
     }
 
+    // 2. Salva os dados extras na tabela profiles
     if (data.user) {
         const { error: profileError } = await supabaseClient
             .from('profiles')
@@ -35,9 +34,9 @@ async function registrarUsuario(email, password, nome, whatsapp) {
 
         if (profileError) {
             console.error("Erro ao salvar perfil:", profileError);
-            alert("Conta criada, mas houve um erro ao salvar perfil: " + profileError.message);
+            alert("Conta criada, mas houve um erro ao salvar dados: " + profileError.message);
         } else {
-            alert("Cadastro realizado com sucesso! Você será redirecionado.");
+            alert("Cadastro realizado! Redirecionando para o login...");
             window.location.href = "login.html"; 
         }
     }
@@ -66,8 +65,8 @@ async function verificarRoleERedirecionar(userId) {
         .single();
 
     if (error) {
-        console.error("Erro ao buscar role:", error);
-        window.location.href = "dashboard-cliente.html";
+        console.error("Erro ao buscar função do usuário:", error);
+        window.location.href = "dashboard-cliente.html"; // Padrão seguro
         return;
     }
 
@@ -82,7 +81,7 @@ async function verificarRoleERedirecionar(userId) {
     }
 }
 
-// --- FUNÇÃO DE LOGOUT ---
+// --- FUNÇÃO DE SAIR ---
 async function sair() {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
