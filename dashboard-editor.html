@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Editor - Arthur Vitelbo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; }
+        .card { background:#161616; border:1px solid #2a2a2a; border-radius:12px; transition:all .2s; }
+        .card:hover { border-color: #3b82f6; }
+        .badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 99px; font-weight: bold; text-transform: uppercase; }
+        .bg-pendente { background: #451a03; color: #fbbf24; }
+        .bg-andamento { background: #1e1b4b; color: #818cf8; }
+    </style>
+</head>
+<body class="p-6">
+
+    <header class="flex justify-between items-center mb-8 border-b border-zinc-800 pb-4">
+        <div class="flex items-center gap-4">
+            <div class="bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center font-bold">ED</div>
+            <div>
+                <h1 class="font-bold text-xl">Área do Editor</h1>
+                <p class="text-xs text-zinc-500" id="editor-nome">Carregando...</p>
+            </div>
+        </div>
+        <button onclick="sair()" class="text-red-400 hover:text-red-300 text-sm font-bold">SAIR <i class="fas fa-sign-out-alt ml-1"></i></button>
+    </header>
+
+    <main class="grid lg:grid-cols-2 gap-8">
+        
+        <section>
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-inbox text-zinc-500"></i> Pedidos Disponíveis
+                <span id="count-pendentes" class="bg-zinc-800 text-xs px-2 py-1 rounded-full">0</span>
+            </h2>
+            <div id="lista-pendentes" class="space-y-4">
+                <p class="text-zinc-600">Buscando tarefas...</p>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-tasks text-blue-500"></i> Minhas Tarefas Atuais
+            </h2>
+            <div id="lista-minhas" class="space-y-4">
+                <p class="text-zinc-600">Você não tem tarefas em andamento.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="modal-entrega" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center z-50">
+        <div class="bg-[#1a1a1a] p-6 rounded-xl w-full max-w-md border border-zinc-700">
+            <h3 class="font-bold text-xl mb-4">Finalizar Pedido</h3>
+            <label class="text-sm text-zinc-400 block mb-2">Link do Vídeo Editado (Drive/WeTransfer)</label>
+            <input type="url" id="link-final" class="w-full bg-zinc-900 border border-zinc-700 p-3 rounded mb-4 text-white" placeholder="https://...">
+            <div class="flex justify-end gap-2">
+                <button onclick="fecharModal()" class="px-4 py-2 rounded border border-zinc-600 hover:bg-zinc-800">Cancelar</button>
+                <button id="btn-confirmar-entrega" class="px-4 py-2 rounded bg-green-600 hover:bg-green-700 font-bold">Entregar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script-editor.js"></script>
+</body>
+</html>
