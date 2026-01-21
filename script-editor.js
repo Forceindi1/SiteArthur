@@ -2,23 +2,20 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT V4.1 (EMAIL TEXTO) - CARREGADO");
+console.log("SCRIPT V5.0 (ENTREGA FINAL) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
 let listaDeClientes = []; 
 
 window.onload = async () => {
-    // 1. Verifica Login
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = "login.html"; return; }
     editorAtual = user;
 
-    // 2. BUSCA TODOS OS CLIENTES
     const { data: perfis } = await supabaseClient.from('profiles').select('*');
     if(perfis) listaDeClientes = perfis;
 
-    // Nome do editor
     const meuPerfil = listaDeClientes.find(p => p.id === user.id);
     if(meuPerfil) document.getElementById('editor-nome').innerText = meuPerfil.nome;
     
@@ -26,16 +23,12 @@ window.onload = async () => {
 };
 
 async function carregarPainel() {
-    // 3. BUSCA OS PEDIDOS
     const { data: pedidos, error } = await supabaseClient
         .from('orders')
         .select('*')
         .order('data_solicitacao', { ascending: true });
 
-    if (error) {
-        alert("Erro: " + error.message);
-        return;
-    }
+    if (error) { alert("Erro: " + error.message); return; }
 
     const pendentes = pedidos.filter(p => p.status === 'pendente');
     const meus = pedidos.filter(p => p.editor_id === editorAtual.id && (p.status === 'em_andamento' || p.status === 'aceito'));
@@ -61,7 +54,6 @@ function renderizarPendentes(lista) {
 
     container.innerHTML = lista.map(pedido => {
         const cliente = getDadosCliente(pedido.client_id);
-        
         return `
         <div class="card p-4 mb-4 border border-zinc-800 bg-[#161616] rounded-xl">
             <div class="flex justify-between items-start mb-2">
@@ -71,7 +63,6 @@ function renderizarPendentes(lista) {
             <h3 class="font-bold text-lg mb-1 text-white">${pedido.titulo_ideia}</h3>
             <p class="text-xs text-blue-400 mb-2">👤 Cliente: ${cliente.nome}</p>
             <p class="text-sm text-zinc-400 mb-3 line-clamp-2">${pedido.descricao_detalhada || 'Sem descrição'}</p>
-            
             <div class="flex gap-2 mt-4">
                 ${pedido.video_bruto_url ? `<a href="${pedido.video_bruto_url}" target="_blank" class="flex-1 text-center py-2 border border-zinc-700 rounded text-sm hover:bg-zinc-800 text-white">Ver Vídeo</a>` : ''}
                 <button onclick="aceitarTarefa(${pedido.id})" class="flex-1 py-2 bg-blue-600 rounded text-sm font-bold hover:bg-blue-700 text-white">Aceitar Tarefa</button>
@@ -93,7 +84,8 @@ function renderizarMeus(lista) {
         const zapLimpo = cliente.whatsapp ? cliente.whatsapp.replace(/[^0-9]/g, '') : '';
         const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
-        
+        const emailValido = cliente.email && cliente.email.includes('@');
+
         return `
         <div class="card p-5 border-l-4 border-blue-500 bg-[#161616] rounded-xl mb-6 shadow-lg">
             <div class="flex justify-between mb-3">
@@ -110,10 +102,8 @@ function renderizarMeus(lista) {
                         <p class="text-sm font-bold text-white">${cliente.nome || 'Sem Nome'}</p>
                     </div>
                 </div>
-                
                 <div class="flex gap-2 mt-2 items-center">
                     ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition flex items-center justify-center gap-2">📱 WhatsApp</a>` : ''}
-                    
                     <div class="flex-1 py-2 bg-zinc-800 border border-zinc-700 text-zinc-400 text-center rounded text-xs select-all cursor-text overflow-hidden text-ellipsis whitespace-nowrap px-2" title="Clique para copiar">
                         ${cliente.email || 'Sem Email'}
                     </div>
@@ -134,12 +124,13 @@ function renderizarMeus(lista) {
     `}).join('');
 }
 
-// --- FUNÇÕES DE AÇÃO GLOBAIS ---
+// --- FUNÇÕES GLOBAIS ---
+
 window.atualizarPrazo = async function(id, novaData) {
     if(!novaData) return;
     const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
     if(error) alert("Erro: " + error.message);
-    else alert("Prazo salvo com sucesso!");
+    else alert("Prazo salvo!");
 }
 
 window.aceitarTarefa = async function(id) {
@@ -154,11 +145,21 @@ window.abandonarTarefa = async function(id) {
     if(!error) carregarPainel();
 }
 
+// CORREÇÃO: Agora salvamos o link na coluna 'link_entrega'
 window.finalizarTarefa = async function(id) {
-    const linkPronto = prompt("Link do vídeo pronto (Drive/WeTransfer):");
+    const linkPronto = prompt("Cole o link do vídeo finalizado (Google Drive, WeTransfer, etc):");
     if(!linkPronto) return;
-    const { error } = await supabaseClient.from('orders').update({ status: 'finalizado', data_conclusao: new Date() }).eq('id', id);
-    if(!error) { alert("Entregue!"); carregarPainel(); }
+    
+    const { error } = await supabaseClient.from('orders')
+        .update({ 
+            status: 'finalizado', 
+            data_conclusao: new Date(),
+            link_entrega: linkPronto // <--- SALVANDO O LINK AQUI
+        })
+        .eq('id', id);
+
+    if(!error) { alert("Entregue com sucesso!"); carregarPainel(); }
+    else { alert("Erro: " + error.message); }
 }
 
 window.sair = async function() {
