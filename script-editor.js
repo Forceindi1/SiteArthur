@@ -2,11 +2,11 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT V3.0 (JOIN MANUAL) - CARREGADO");
+console.log("SCRIPT V4.0 (FUNÇÕES GLOBAIS) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
-let listaDeClientes = []; // Vamos guardar os clientes aqui
+let listaDeClientes = []; 
 
 window.onload = async () => {
     // 1. Verifica Login
@@ -14,15 +14,11 @@ window.onload = async () => {
     if (!user) { window.location.href = "login.html"; return; }
     editorAtual = user;
 
-    // 2. BUSCA TODOS OS CLIENTES (Para sabermos os nomes/zaps)
-    // Fazemos isso separado para não travar a busca de pedidos
-    const { data: perfis, error: erroPerfis } = await supabaseClient
-        .from('profiles')
-        .select('*');
-    
+    // 2. BUSCA TODOS OS CLIENTES
+    const { data: perfis } = await supabaseClient.from('profiles').select('*');
     if(perfis) listaDeClientes = perfis;
 
-    // Coloca o nome do editor no topo
+    // Nome do editor
     const meuPerfil = listaDeClientes.find(p => p.id === user.id);
     if(meuPerfil) document.getElementById('editor-nome').innerText = meuPerfil.nome;
     
@@ -30,18 +26,17 @@ window.onload = async () => {
 };
 
 async function carregarPainel() {
-    // 3. BUSCA OS PEDIDOS (Sem tentar misturar tabelas no banco)
+    // 3. BUSCA OS PEDIDOS
     const { data: pedidos, error } = await supabaseClient
         .from('orders')
         .select('*')
         .order('data_solicitacao', { ascending: true });
 
     if (error) {
-        alert("Erro ao buscar pedidos: " + error.message);
+        alert("Erro: " + error.message);
         return;
     }
 
-    // Separa o que é Novo do que é Meu
     const pendentes = pedidos.filter(p => p.status === 'pendente');
     const meus = pedidos.filter(p => p.editor_id === editorAtual.id && (p.status === 'em_andamento' || p.status === 'aceito'));
 
@@ -49,13 +44,11 @@ async function carregarPainel() {
     renderizarMeus(meus);
 }
 
-// FUNÇÃO MÁGICA: Encontra o dono do pedido na nossa lista
 function getDadosCliente(idDoCliente) {
     const cliente = listaDeClientes.find(p => p.id === idDoCliente);
     return cliente || { nome: 'Desconhecido', whatsapp: '', email: '' };
 }
 
-// RENDERIZA PEDIDOS DISPONÍVEIS
 function renderizarPendentes(lista) {
     const container = document.getElementById('lista-pendentes');
     const contador = document.getElementById('count-pendentes');
@@ -67,7 +60,6 @@ function renderizarPendentes(lista) {
     }
 
     container.innerHTML = lista.map(pedido => {
-        // Usa a função mágica para pegar o nome
         const cliente = getDadosCliente(pedido.client_id);
         
         return `
@@ -88,7 +80,6 @@ function renderizarPendentes(lista) {
     `}).join('');
 }
 
-// RENDERIZA MINHAS TAREFAS (Com Contato e Prazo)
 function renderizarMeus(lista) {
     const container = document.getElementById('lista-minhas');
     
@@ -99,20 +90,18 @@ function renderizarMeus(lista) {
 
     container.innerHTML = lista.map(pedido => {
         const cliente = getDadosCliente(pedido.client_id);
-        
-        // Arruma o Link do WhatsApp
         const zapLimpo = cliente.whatsapp ? cliente.whatsapp.replace(/[^0-9]/g, '') : '';
         const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
-        
-        // Data do Prazo
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
+        
+        // Verifica se tem email
+        const emailValido = cliente.email && cliente.email.includes('@');
 
         return `
         <div class="card p-5 border-l-4 border-blue-500 bg-[#161616] rounded-xl mb-6 shadow-lg">
             <div class="flex justify-between mb-3">
                 <span class="badge bg-andamento text-blue-400 bg-blue-900/20 px-3 py-1 rounded-full text-xs font-bold">EM PRODUÇÃO</span>
             </div>
-            
             <h3 class="font-bold text-xl text-white mb-1">${pedido.titulo_ideia}</h3>
             <p class="text-sm text-zinc-500 mb-4">${pedido.descricao_detalhada || ''}</p>
             
@@ -121,22 +110,19 @@ function renderizarMeus(lista) {
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs">👤</div>
                     <div>
-                        <p class="text-sm font-bold text-white">${cliente.nome}</p>
-                        <p class="text-xs text-zinc-500">${cliente.email}</p>
+                        <p class="text-sm font-bold text-white">${cliente.nome || 'Sem Nome'}</p>
+                        <p class="text-xs text-zinc-500">${cliente.email || 'Sem Email'}</p>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-2">
                     ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition">💬 WhatsApp</a>` : ''}
-                    <a href="mailto:${cliente.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>
+                    ${emailValido ? `<a href="mailto:${cliente.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>` : '<span class="flex-1 py-1.5 bg-zinc-800 text-zinc-600 text-center rounded text-xs">Sem Email</span>'}
                 </div>
             </div>
 
             <div class="mb-4">
                 <label class="text-xs text-zinc-400 font-bold uppercase block mb-1">📅 Prazo de Entrega</label>
-                <input type="date" 
-                       value="${dataEntregaValue}" 
-                       onchange="atualizarPrazo(${pedido.id}, this.value)"
-                       class="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-white text-sm focus:border-blue-500 outline-none">
+                <input type="date" value="${dataEntregaValue}" onchange="atualizarPrazo(${pedido.id}, this.value)" class="w-full bg-zinc-900 border border-zinc-700 rounded p-2 text-white text-sm focus:border-blue-500 outline-none">
             </div>
             
             <div class="flex flex-col gap-2 mt-4 pt-4 border-t border-zinc-800">
@@ -148,35 +134,36 @@ function renderizarMeus(lista) {
     `}).join('');
 }
 
-// --- FUNÇÕES DE AÇÃO (As mesmas de antes) ---
+// --- FUNÇÕES DE AÇÃO GLOBAIS (window.funcao) ---
 
-async function atualizarPrazo(id, novaData) {
+window.atualizarPrazo = async function(id, novaData) {
     if(!novaData) return;
+    console.log("Salvando data:", novaData, "para ID:", id); // Debug
     const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
     if(error) alert("Erro: " + error.message);
-    else alert("Prazo salvo!");
+    else alert("Prazo salvo com sucesso!");
 }
 
-async function aceitarTarefa(id) {
+window.aceitarTarefa = async function(id) {
     if(!confirm("Aceitar esta tarefa?")) return;
     const { error } = await supabaseClient.from('orders').update({ status: 'em_andamento', editor_id: editorAtual.id }).eq('id', id);
     if(!error) carregarPainel();
 }
 
-async function abandonarTarefa(id) {
+window.abandonarTarefa = async function(id) {
     if(!confirm("Desistir da tarefa?")) return;
     const { error } = await supabaseClient.from('orders').update({ status: 'pendente', editor_id: null }).eq('id', id);
     if(!error) carregarPainel();
 }
 
-async function finalizarTarefa(id) {
+window.finalizarTarefa = async function(id) {
     const linkPronto = prompt("Link do vídeo pronto (Drive/WeTransfer):");
     if(!linkPronto) return;
     const { error } = await supabaseClient.from('orders').update({ status: 'finalizado', data_conclusao: new Date() }).eq('id', id);
     if(!error) { alert("Entregue!"); carregarPainel(); }
 }
 
-async function sair() {
+window.sair = async function() {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
 }
