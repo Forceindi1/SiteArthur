@@ -1,14 +1,15 @@
 // --- CONFIGURAÇÃO ---
-// Substitua pelos seus dados REAIS do Supabase
-const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
+// Esta é a URL que vi no seu print (mantenha as aspas simples)
+const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co';
+
+// ⚠️ ATENÇÃO: Apague o texto abaixo e cole a sua "anon public key" do Supabase dentro das aspas
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
-// CORREÇÃO AQUI: Mudamos o nome da variável para 'supabaseClient' para não dar conflito
+// Cria a conexão (Não mude nada abaixo)
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- FUNÇÃO DE CADASTRO (CLIENTE) ---
 async function registrarUsuario(email, password, nome, whatsapp) {
-    // Usa 'supabaseClient' em vez de 'supabase'
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
@@ -66,16 +67,15 @@ async function verificarRoleERedirecionar(userId) {
 
     if (error) {
         console.error("Erro ao buscar role:", error);
-        // Se der erro, assume cliente por segurança ou manda pro login
         window.location.href = "dashboard-cliente.html";
         return;
     }
 
     if (data) {
         if (data.role === 'gestor') {
-            window.location.href = "dashboard-gestor.html"; // Ainda vamos criar
+            window.location.href = "dashboard-gestor.html";
         } else if (data.role === 'editor') {
-            window.location.href = "dashboard-editor.html"; // Ainda vamos criar
+            window.location.href = "dashboard-editor.html";
         } else {
             window.location.href = "dashboard-cliente.html"; 
         }
