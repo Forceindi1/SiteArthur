@@ -2,47 +2,55 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT EDITOR VERSÃO 2.0 - CARREGADO COM SUCESSO"); // <--- O SEGREDO
+console.log("SCRIPT EDITOR V3.0 (MANUAL JOIN) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
+let todosPerfis = []; // Vamos guardar os nomes aqui
 
-// AO CARREGAR
 window.onload = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = "login.html"; return; }
-
     editorAtual = user;
+
+    // 1. PRIMEIRO: Baixa a lista de TODOS os clientes (Nome, Zap, Email)
+    // Isso evita o erro de conexão do banco de dados
+    const { data: perfis, error: errPerfis } = await supabaseClient
+        .from('profiles')
+        .select('*');
     
-    // Tenta carregar nome do editor
-    try {
-        const { data: perfil } = await supabaseClient.from('profiles').select('nome').eq('id', user.id).single();
-        if(perfil) document.getElementById('editor-nome').innerText = perfil.nome;
-    } catch (e) { console.log("Erro perfil:", e); }
+    if(perfis) todosPerfis = perfis;
+
+    // Coloca o nome do editor no topo
+    const meuPerfil = todosPerfis.find(p => p.id === user.id);
+    if(meuPerfil) document.getElementById('editor-nome').innerText = meuPerfil.nome;
     
     carregarPainel();
 };
 
 async function carregarPainel() {
-    // 1. Buscar Pedidos PENDENTES
-    // IMPORTANTE: Como desligamos o RLS, agora podemos buscar o 'profiles(nome)' sem travar
-    const { data: pendentes } = await supabaseClient
+    // 2. SEGUNDO: Baixa apenas os pedidos (sem tentar juntar tabelas)
+    const { data: pedidos, error } = await supabaseClient
         .from('orders')
-        .select('*, profiles(nome)') 
-        .eq('status', 'pendente')
+        .select('*')
         .order('data_solicitacao', { ascending: true });
 
-    renderizarPendentes(pendentes || []);
+    if (error) {
+        alert("Erro ao buscar pedidos: " + error.message);
+        return;
+    }
 
-    // 2. Buscar Pedidos EM ANDAMENTO (Meus)
-    // Aqui trazemos whatsapp e email para você entrar em contato
-    const { data: meus } = await supabaseClient
-        .from('orders')
-        .select('*, profiles(nome, whatsapp, email)')
-        .eq('editor_id', editorAtual.id)
-        .in('status', ['em_andamento', 'aceito']);
+    // Separa os pedidos
+    const pendentes = pedidos.filter(p => p.status === 'pendente');
+    const meus = pedidos.filter(p => p.editor_id === editorAtual.id && (p.status === 'em_andamento' || p.status === 'aceito'));
 
-    renderizarMeus(meus || []);
+    renderizarPendentes(pendentes);
+    renderizarMeus(meus);
+}
+
+// FUNÇÃO AUXILIAR: Encontra o cliente na lista que baixamos
+function getCliente(id) {
+    return todosPerfis.find(p => p.id === id) || { nome: 'Desconhecido', whatsapp: '', email: '' };
 }
 
 // RENDERIZA LISTA DE DISPONÍVEIS
@@ -56,14 +64,17 @@ function renderizarPendentes(lista) {
         return;
     }
 
-    container.innerHTML = lista.map(pedido => `
+    container.innerHTML = lista.map(pedido => {
+        const cliente = getCliente(pedido.client_id); // Pega o nome manualmente
+        
+        return `
         <div class="card p-4 mb-4 border border-zinc-800 bg-[#161616] rounded-xl">
             <div class="flex justify-between items-start mb-2">
                 <span class="badge bg-pendente text-yellow-500 bg-yellow-900/30 px-2 py-1 rounded text-xs">Novo Pedido</span>
                 <span class="text-xs text-zinc-500">${new Date(pedido.data_solicitacao).toLocaleDateString()}</span>
             </div>
             <h3 class="font-bold text-lg mb-1 text-white">${pedido.titulo_ideia}</h3>
-            <p class="text-xs text-blue-400 mb-2">👤 Cliente: ${pedido.profiles?.nome || 'Anônimo'}</p>
+            <p class="text-xs text-blue-400 mb-2">👤 Cliente: ${cliente.nome}</p>
             <p class="text-sm text-zinc-400 mb-3 line-clamp-2">${pedido.descricao_detalhada || 'Sem descrição'}</p>
             
             <div class="flex gap-2 mt-4">
@@ -71,10 +82,10 @@ function renderizarPendentes(lista) {
                 <button onclick="aceitarTarefa(${pedido.id})" class="flex-1 py-2 bg-blue-600 rounded text-sm font-bold hover:bg-blue-700 text-white">Aceitar Tarefa</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
-// RENDERIZA LISTA DE MINHAS TAREFAS (COM CONTATO E PRAZO)
+// RENDERIZA LISTA DE MINHAS TAREFAS
 function renderizarMeus(lista) {
     const container = document.getElementById('lista-minhas');
     
@@ -84,12 +95,11 @@ function renderizarMeus(lista) {
     }
 
     container.innerHTML = lista.map(pedido => {
-        // Limpa o numero do whatsapp para criar o link
-        const zapRaw = pedido.profiles?.whatsapp || '';
-        const zapLimpo = zapRaw.replace(/[^0-9]/g, '');
-        const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
+        const cliente = getCliente(pedido.client_id);
         
-        // Pega a data de entrega se existir
+        // Formata WhatsApp
+        const zapLimpo = cliente.whatsapp ? cliente.whatsapp.replace(/[^0-9]/g, '') : '';
+        const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
 
         return `
@@ -106,13 +116,13 @@ function renderizarMeus(lista) {
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs">👤</div>
                     <div>
-                        <p class="text-sm font-bold text-white">${pedido.profiles?.nome || 'Cliente'}</p>
-                        <p class="text-xs text-zinc-500">${pedido.profiles?.email || 'Sem email'}</p>
+                        <p class="text-sm font-bold text-white">${cliente.nome || 'Sem Nome'}</p>
+                        <p class="text-xs text-zinc-500">${cliente.email || 'Sem Email'}</p>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-2">
                     ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition">💬 WhatsApp</a>` : ''}
-                    <a href="mailto:${pedido.profiles?.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>
+                    <a href="mailto:${cliente.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>
                 </div>
             </div>
 
@@ -130,17 +140,16 @@ function renderizarMeus(lista) {
                 <button onclick="abandonarTarefa(${pedido.id})" class="w-full py-2 text-red-400 hover:text-red-300 text-xs mt-1">Desistir da tarefa</button>
             </div>
         </div>
-    `;
-    }).join('');
+    `}).join('');
 }
 
-// --- FUNÇÕES DE AÇÃO ---
+// --- FUNÇÕES DE AÇÃO (IGUAIS A ANTES) ---
 
 async function atualizarPrazo(id, novaData) {
     if(!novaData) return;
     const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
-    if(error) alert("Erro ao salvar prazo: " + error.message);
-    else alert("Prazo definido!");
+    if(error) alert("Erro: " + error.message);
+    else alert("Prazo Salvo!");
 }
 
 async function aceitarTarefa(id) {
@@ -156,9 +165,8 @@ async function abandonarTarefa(id) {
 }
 
 async function finalizarTarefa(id) {
-    const linkPronto = prompt("Cole o link do vídeo finalizado (Google Drive, WeTransfer, etc):");
+    const linkPronto = prompt("Cole o link do vídeo finalizado:");
     if(!linkPronto) return;
-    // Aqui poderíamos salvar o link no banco se tivesse coluna, mas por enquanto finalizamos o status
     const { error } = await supabaseClient.from('orders').update({ status: 'finalizado', data_conclusao: new Date() }).eq('id', id);
     if(!error) { alert("Pedido entregue!"); carregarPainel(); }
 }
