@@ -12,8 +12,8 @@
         <h2 class="text-2xl font-bold mb-6 text-center text-blue-500">Área do Cliente</h2>
         
         <form id="form-login" class="space-y-4">
-            <input type="email" id="email" placeholder="Seu E-mail" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
-            <input type="password" id="senha" placeholder="Sua Senha" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
+            <input type="email" id="email" placeholder="Seu E-mail" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
+            <input type="password" id="senha" placeholder="Sua Senha" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
             
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Entrar</button>
         </form>
@@ -31,7 +31,12 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const senha = document.getElementById('senha').value;
-            await fazerLogin(email, senha);
+            
+            if(typeof fazerLogin === 'function') {
+                await fazerLogin(email, senha);
+            } else {
+                alert("Erro: O script de login não foi carregado.");
+            }
         });
     </script>
 </body>
