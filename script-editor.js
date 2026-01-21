@@ -2,7 +2,7 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT V4.0 (FUNÇÕES GLOBAIS) - CARREGADO");
+console.log("SCRIPT V4.1 (EMAIL TEXTO) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
@@ -94,9 +94,6 @@ function renderizarMeus(lista) {
         const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
         
-        // Verifica se tem email
-        const emailValido = cliente.email && cliente.email.includes('@');
-
         return `
         <div class="card p-5 border-l-4 border-blue-500 bg-[#161616] rounded-xl mb-6 shadow-lg">
             <div class="flex justify-between mb-3">
@@ -111,12 +108,15 @@ function renderizarMeus(lista) {
                     <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs">👤</div>
                     <div>
                         <p class="text-sm font-bold text-white">${cliente.nome || 'Sem Nome'}</p>
-                        <p class="text-xs text-zinc-500">${cliente.email || 'Sem Email'}</p>
                     </div>
                 </div>
-                <div class="flex gap-2 mt-2">
-                    ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition">💬 WhatsApp</a>` : ''}
-                    ${emailValido ? `<a href="mailto:${cliente.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>` : '<span class="flex-1 py-1.5 bg-zinc-800 text-zinc-600 text-center rounded text-xs">Sem Email</span>'}
+                
+                <div class="flex gap-2 mt-2 items-center">
+                    ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition flex items-center justify-center gap-2">📱 WhatsApp</a>` : ''}
+                    
+                    <div class="flex-1 py-2 bg-zinc-800 border border-zinc-700 text-zinc-400 text-center rounded text-xs select-all cursor-text overflow-hidden text-ellipsis whitespace-nowrap px-2" title="Clique para copiar">
+                        ${cliente.email || 'Sem Email'}
+                    </div>
                 </div>
             </div>
 
@@ -134,11 +134,9 @@ function renderizarMeus(lista) {
     `}).join('');
 }
 
-// --- FUNÇÕES DE AÇÃO GLOBAIS (window.funcao) ---
-
+// --- FUNÇÕES DE AÇÃO GLOBAIS ---
 window.atualizarPrazo = async function(id, novaData) {
     if(!novaData) return;
-    console.log("Salvando data:", novaData, "para ID:", id); // Debug
     const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
     if(error) alert("Erro: " + error.message);
     else alert("Prazo salvo com sucesso!");
