@@ -1,24 +1,31 @@
-// --- CONFIGURAÇÃO ---
-// URL e KEY do Supabase (Mantenha as aspas)
-const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co';
-const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
-// Inicializa o cliente do Supabase
+// --- CONFIGURAÇÃO BLINDADA ---
+// O .trim() garante que não haja espaços antes ou depois do link
+const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co'.trim();
+
+// COLE SUA KEY AQUI DENTRO (Mantenha o .trim() no final)
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'.trim();
+
+// Console Log para Debug (Vai aparecer no seu F12 se der erro)
+console.log("Tentando conectar no Supabase com:", supabaseUrl);
+
+// Conexão
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 // --- FUNÇÃO DE CADASTRO (CLIENTE) ---
 async function registrarUsuario(email, password, nome, whatsapp) {
-    // 1. Cria o usuário na autenticação
+    console.log("Iniciando cadastro para:", email);
+    
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
     });
 
     if (error) {
+        console.error("Erro Supabase:", error);
         alert("Erro ao criar conta: " + error.message);
         return;
     }
 
-    // 2. Salva os dados extras na tabela profiles
     if (data.user) {
         const { error: profileError } = await supabaseClient
             .from('profiles')
@@ -33,10 +40,10 @@ async function registrarUsuario(email, password, nome, whatsapp) {
             ]);
 
         if (profileError) {
-            console.error("Erro ao salvar perfil:", profileError);
-            alert("Conta criada, mas houve um erro ao salvar dados: " + profileError.message);
+            console.error("Erro Perfil:", profileError);
+            alert("Erro ao salvar perfil: " + profileError.message);
         } else {
-            alert("Cadastro realizado! Redirecionando para o login...");
+            alert("Cadastro realizado! Redirecionando...");
             window.location.href = "login.html"; 
         }
     }
@@ -65,8 +72,8 @@ async function verificarRoleERedirecionar(userId) {
         .single();
 
     if (error) {
-        console.error("Erro ao buscar função do usuário:", error);
-        window.location.href = "dashboard-cliente.html"; // Padrão seguro
+        // Se der erro, assume cliente
+        window.location.href = "dashboard-cliente.html";
         return;
     }
 
@@ -79,10 +86,4 @@ async function verificarRoleERedirecionar(userId) {
             window.location.href = "dashboard-cliente.html"; 
         }
     }
-}
-
-// --- FUNÇÃO DE SAIR ---
-async function sair() {
-    await supabaseClient.auth.signOut();
-    window.location.href = "index.html";
 }
