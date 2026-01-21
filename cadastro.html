@@ -10,13 +10,13 @@
 <body>
     <div class="w-full max-w-md bg-[#121212] p-8 rounded-2xl border border-zinc-800 shadow-2xl">
         <h2 class="text-2xl font-bold mb-6 text-center text-blue-500">Solicitar Orçamento</h2>
-        <p class="text-zinc-500 text-center mb-6 text-sm">Crie sua conta para enviar vídeos e acompanhar pedidos.</p>
+        <p class="text-zinc-500 text-center mb-6 text-sm">Crie sua conta para enviar vídeos.</p>
         
         <form id="form-cadastro" class="space-y-4">
-            <input type="text" id="nome" placeholder="Seu Nome" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
-            <input type="email" id="email" placeholder="Seu E-mail" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
-            <input type="text" id="whatsapp" placeholder="WhatsApp" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
-            <input type="password" id="senha" placeholder="Crie uma Senha" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none transition">
+            <input type="text" id="nome" placeholder="Seu Nome" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
+            <input type="email" id="email" placeholder="Seu E-mail" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
+            <input type="text" id="whatsapp" placeholder="WhatsApp" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
+            <input type="password" id="senha" placeholder="Crie uma Senha" required class="w-full p-3 bg-zinc-900 border border-zinc-700 rounded-lg focus:border-blue-500 outline-none text-white">
             
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition">Criar Conta</button>
         </form>
@@ -37,8 +37,11 @@
             const zap = document.getElementById('whatsapp').value;
             const senha = document.getElementById('senha').value;
             
-            // Chama a função do script-auth.js
-            await registrarUsuario(email, senha, nome, zap);
+            if(typeof registrarUsuario === 'function') {
+                await registrarUsuario(email, senha, nome, zap);
+            } else {
+                alert("Erro: O script de cadastro não foi carregado corretamente.");
+            }
         });
     </script>
 </body>
