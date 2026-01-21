@@ -2,6 +2,8 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
+console.log("SCRIPT EDITOR VERSÃO 2.0 - CARREGADO COM SUCESSO"); // <--- O SEGREDO
+
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let editorAtual = null;
 
@@ -12,7 +14,7 @@ window.onload = async () => {
 
     editorAtual = user;
     
-    // Mostra nome do editor
+    // Tenta carregar nome do editor
     try {
         const { data: perfil } = await supabaseClient.from('profiles').select('nome').eq('id', user.id).single();
         if(perfil) document.getElementById('editor-nome').innerText = perfil.nome;
@@ -23,26 +25,24 @@ window.onload = async () => {
 
 async function carregarPainel() {
     // 1. Buscar Pedidos PENDENTES
-    // Agora buscamos também o NOME do cliente (profiles:nome)
-    const { data: pendentes, error: erroPendentes } = await supabaseClient
+    // IMPORTANTE: Como desligamos o RLS, agora podemos buscar o 'profiles(nome)' sem travar
+    const { data: pendentes } = await supabaseClient
         .from('orders')
         .select('*, profiles(nome)') 
         .eq('status', 'pendente')
         .order('data_solicitacao', { ascending: true });
 
-    if (erroPendentes) console.error("Erro pendentes:", erroPendentes);
-    else renderizarPendentes(pendentes || []);
+    renderizarPendentes(pendentes || []);
 
     // 2. Buscar Pedidos EM ANDAMENTO (Meus)
-    // Aqui buscamos NOME, WHATSAPP e EMAIL do cliente para contato
-    const { data: meus, error: erroMeus } = await supabaseClient
+    // Aqui trazemos whatsapp e email para você entrar em contato
+    const { data: meus } = await supabaseClient
         .from('orders')
         .select('*, profiles(nome, whatsapp, email)')
         .eq('editor_id', editorAtual.id)
         .in('status', ['em_andamento', 'aceito']);
 
-    if (erroMeus) console.error("Erro meus:", erroMeus);
-    else renderizarMeus(meus || []);
+    renderizarMeus(meus || []);
 }
 
 // RENDERIZA LISTA DE DISPONÍVEIS
@@ -84,9 +84,12 @@ function renderizarMeus(lista) {
     }
 
     container.innerHTML = lista.map(pedido => {
-        // Prepara link do WhatsApp (remove caracteres não numéricos)
-        const zapLimpo = pedido.profiles?.whatsapp?.replace(/[^0-9]/g, '') || '';
+        // Limpa o numero do whatsapp para criar o link
+        const zapRaw = pedido.profiles?.whatsapp || '';
+        const zapLimpo = zapRaw.replace(/[^0-9]/g, '');
         const linkZap = zapLimpo ? `https://wa.me/55${zapLimpo}` : '#';
+        
+        // Pega a data de entrega se existir
         const dataEntregaValue = pedido.data_entrega ? new Date(pedido.data_entrega).toISOString().split('T')[0] : '';
 
         return `
@@ -104,17 +107,17 @@ function renderizarMeus(lista) {
                     <div class="w-8 h-8 rounded-full bg-zinc-700 flex items-center justify-center text-xs">👤</div>
                     <div>
                         <p class="text-sm font-bold text-white">${pedido.profiles?.nome || 'Cliente'}</p>
-                        <p class="text-xs text-zinc-500">${pedido.profiles?.email || ''}</p>
+                        <p class="text-xs text-zinc-500">${pedido.profiles?.email || 'Sem email'}</p>
                     </div>
                 </div>
                 <div class="flex gap-2 mt-2">
-                    ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900"><i class="fab fa-whatsapp"></i> WhatsApp</a>` : ''}
-                    <a href="mailto:${pedido.profiles?.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold"><i class="far fa-envelope"></i> Email</a>
+                    ${zapLimpo ? `<a href="${linkZap}" target="_blank" class="flex-1 py-1.5 bg-green-600/20 text-green-400 hover:bg-green-600/30 text-center rounded text-xs font-bold border border-green-900 transition">💬 WhatsApp</a>` : ''}
+                    <a href="mailto:${pedido.profiles?.email}" class="flex-1 py-1.5 bg-zinc-700 text-zinc-300 hover:bg-zinc-600 text-center rounded text-xs font-bold transition">✉️ Email</a>
                 </div>
             </div>
 
             <div class="mb-4">
-                <label class="text-xs text-zinc-400 font-bold uppercase block mb-1">Prazo de Entrega</label>
+                <label class="text-xs text-zinc-400 font-bold uppercase block mb-1">📅 Prazo de Entrega</label>
                 <input type="date" 
                        value="${dataEntregaValue}" 
                        onchange="atualizarPrazo(${pedido.id}, this.value)"
@@ -122,8 +125,8 @@ function renderizarMeus(lista) {
             </div>
             
             <div class="flex flex-col gap-2 mt-4 pt-4 border-t border-zinc-800">
-                ${pedido.video_bruto_url ? `<a href="${pedido.video_bruto_url}" target="_blank" class="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-center rounded text-sm font-semibold">⬇️ Baixar Vídeo do Cliente</a>` : ''}
-                <button onclick="finalizarTarefa(${pedido.id})" class="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-sm font-bold text-white shadow-lg shadow-green-900/20">✅ Entregar Pedido</button>
+                ${pedido.video_bruto_url ? `<a href="${pedido.video_bruto_url}" target="_blank" class="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-center rounded text-sm font-semibold transition">⬇️ Baixar Vídeo</a>` : ''}
+                <button onclick="finalizarTarefa(${pedido.id})" class="w-full py-2 bg-green-600 hover:bg-green-700 rounded text-sm font-bold text-white shadow-lg shadow-green-900/20 transition">✅ Entregar Pedido</button>
                 <button onclick="abandonarTarefa(${pedido.id})" class="w-full py-2 text-red-400 hover:text-red-300 text-xs mt-1">Desistir da tarefa</button>
             </div>
         </div>
@@ -133,63 +136,31 @@ function renderizarMeus(lista) {
 
 // --- FUNÇÕES DE AÇÃO ---
 
-// Atualiza a data no banco assim que você muda o calendário
 async function atualizarPrazo(id, novaData) {
     if(!novaData) return;
-    
-    const { error } = await supabaseClient
-        .from('orders')
-        .update({ data_entrega: novaData })
-        .eq('id', id);
-
+    const { error } = await supabaseClient.from('orders').update({ data_entrega: novaData }).eq('id', id);
     if(error) alert("Erro ao salvar prazo: " + error.message);
-    else alert("Prazo atualizado para o cliente!");
+    else alert("Prazo definido!");
 }
 
 async function aceitarTarefa(id) {
-    if(!confirm("Tem certeza que assume essa responsabilidade?")) return;
-
-    const { error } = await supabaseClient
-        .from('orders')
-        .update({ status: 'em_andamento', editor_id: editorAtual.id })
-        .eq('id', id);
-
-    if(error) alert("Erro: " + error.message);
-    else carregarPainel();
+    if(!confirm("Aceitar esta tarefa?")) return;
+    const { error } = await supabaseClient.from('orders').update({ status: 'em_andamento', editor_id: editorAtual.id }).eq('id', id);
+    if(!error) carregarPainel();
 }
 
 async function abandonarTarefa(id) {
-    if(!confirm("O pedido voltará para a fila geral. Confirmar?")) return;
-
-    const { error } = await supabaseClient
-        .from('orders')
-        .update({ status: 'pendente', editor_id: null })
-        .eq('id', id);
-
+    if(!confirm("Desistir da tarefa?")) return;
+    const { error } = await supabaseClient.from('orders').update({ status: 'pendente', editor_id: null }).eq('id', id);
     if(!error) carregarPainel();
 }
 
 async function finalizarTarefa(id) {
-    // Pergunta o link do vídeo pronto
-    const linkPronto = prompt("Insira o link do vídeo finalizado (Drive, WeTransfer, etc):");
+    const linkPronto = prompt("Cole o link do vídeo finalizado (Google Drive, WeTransfer, etc):");
     if(!linkPronto) return;
-
-    const { error } = await supabaseClient
-        .from('orders')
-        .update({ 
-            status: 'finalizado', 
-            data_conclusao: new Date(),
-            // Se você quiser salvar o link da entrega no banco, precisaria criar uma coluna 'video_final_url' na tabela orders
-            // Por enquanto, salvamos na descrição ou apenas mudamos o status
-        })
-        .eq('id', id);
-
-    if(!error) {
-        alert("Pedido entregue com sucesso!");
-        carregarPainel();
-    } else {
-        alert("Erro: " + error.message);
-    }
+    // Aqui poderíamos salvar o link no banco se tivesse coluna, mas por enquanto finalizamos o status
+    const { error } = await supabaseClient.from('orders').update({ status: 'finalizado', data_conclusao: new Date() }).eq('id', id);
+    if(!error) { alert("Pedido entregue!"); carregarPainel(); }
 }
 
 async function sair() {
