@@ -1,7 +1,7 @@
 // --- CONFIGURAÇÃO ---
 // Substitua pelos seus dados REAIS do Supabase
-const supabaseUrl = 'SUA_URL_DO_SUPABASE_AQUI'; 
-const supabaseKey = 'SUA_CHAVE_ANON_PUBLIC_AQUI';
+const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
 // CORREÇÃO AQUI: Mudamos o nome da variável para 'supabaseClient' para não dar conflito
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
