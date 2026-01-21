@@ -1,39 +1,37 @@
-// --- CONFIGURAÇÃO (COLE SUAS CHAVES AQUI) ---
-const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
-const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
+// --- CONFIGURAÇÃO ---
+const supabaseUrl = 'https://exwdgcfzqapprhzouni.supabase.co';
+const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-// CORREÇÃO: Mudamos o nome para 'supabaseClient' para não conflitar com a biblioteca
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Variável para guardar o usuário logado
 let userAtual = null;
 
-// 1. AO CARREGAR A PÁGINA: Verifica se está logado
+// AO CARREGAR A PÁGINA
 window.onload = async () => {
-    // Usa supabaseClient daqui pra frente
     const { data: { user } } = await supabaseClient.auth.getUser();
     
     if (!user) {
-        window.location.href = "login.html"; // Chuta para fora se não tiver logado
+        window.location.href = "login.html";
         return;
     }
     
     userAtual = user;
     
-    // Busca o nome do usuário para mostrar na sidebar
     const { data: profile } = await supabaseClient
         .from('profiles')
         .select('nome')
         .eq('id', user.id)
         .single();
 
-    if(profile) document.getElementById('user-name').innerText = profile.nome;
+    if(profile) {
+        const nomeElemento = document.getElementById('user-name');
+        if(nomeElemento) nomeElemento.innerText = profile.nome;
+    }
 
-    // Se já estiver na aba de pedidos, carrega
     carregarPedidos();
 };
 
-// 2. FUNÇÃO: ENVIAR NOVO PEDIDO
+// ENVIAR NOVO PEDIDO
 const formPedido = document.getElementById('form-pedido');
 if (formPedido) {
     formPedido.addEventListener('submit', async (e) => {
@@ -48,18 +46,19 @@ if (formPedido) {
             return;
         }
 
-        // Mostra loading
-        document.getElementById('loading-upload').style.display = 'block';
         const btn = e.target.querySelector('button');
+        const loader = document.getElementById('loading-upload');
+        
+        loader.style.display = 'block';
         btn.disabled = true;
-        btn.innerText = "Enviando vídeo... (Aguarde)";
+        btn.innerText = "Enviando... (Aguarde)";
 
         try {
-            // A. Upload do Vídeo para o Storage 'videos'
-            // Sanitiza o nome do arquivo para evitar caracteres estranhos
+            // Limpa nome do arquivo
             const nomeLimpo = arquivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
             const nomeArquivo = `${Date.now()}_${nomeLimpo}`; 
             
+            // Upload
             const { data: videoData, error: uploadError } = await supabaseClient
                 .storage
                 .from('videos')
@@ -67,11 +66,11 @@ if (formPedido) {
 
             if (uploadError) throw uploadError;
 
-            // B. Pega a URL pública do vídeo
+            // Pega URL
             const { data: urlData } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
             const videoUrl = urlData.publicUrl;
 
-            // C. Salva no Banco de Dados (Tabela orders)
+            // Salva no Banco
             const { error: dbError } = await supabaseClient
                 .from('orders')
                 .insert([
@@ -94,12 +93,12 @@ if (formPedido) {
             console.error(error);
             btn.disabled = false;
             btn.innerText = "Enviar Pedido";
-            document.getElementById('loading-upload').style.display = 'none';
+            loader.style.display = 'none';
         }
     });
 }
 
-// 3. FUNÇÃO: CARREGAR MEUS PEDIDOS
+// CARREGAR PEDIDOS
 async function carregarPedidos() {
     const lista = document.getElementById('lista-pedidos');
     if(!lista) return;
@@ -114,7 +113,6 @@ async function carregarPedidos() {
 
     if (error) {
         lista.innerHTML = '<p class="text-red-500">Erro ao carregar pedidos.</p>';
-        console.error(error);
         return;
     }
 
@@ -123,40 +121,29 @@ async function carregarPedidos() {
         return;
     }
 
-    // Monta o HTML de cada pedido
     let html = '';
     pedidos.forEach(pedido => {
-        // Formata data
         const data = new Date(pedido.data_solicitacao).toLocaleDateString('pt-BR');
         const entrega = pedido.data_entrega ? new Date(pedido.data_entrega).toLocaleDateString('pt-BR') : 'A definir';
-        const dataAtualizacao = pedido.updated_at ? new Date(pedido.updated_at).toLocaleString('pt-BR') : data;
+        const statusClean = pedido.status.replace('_', ' ').toUpperCase();
 
         html += `
-            <div class="card p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-zinc-800 bg-[#161616] rounded-xl">
-                <div>
-                    <div class="flex items-center gap-3 mb-2">
-                        <h3 class="font-bold text-lg text-white">${pedido.titulo_ideia}</h3>
-                        <span class="status-${pedido.status} px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border border-white/10">
-                            ${pedido.status.replace('_', ' ')}
-                        </span>
+            <div class="card p-6 border border-zinc-800 bg-[#161616] rounded-xl mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <h3 class="font-bold text-lg text-white">${pedido.titulo_ideia}</h3>
+                            <span class="px-3 py-1 rounded-full text-xs font-bold border border-white/10 bg-zinc-800 text-white">
+                                ${statusClean}
+                            </span>
+                        </div>
+                        <p class="text-zinc-400 text-sm">📅 Data: ${data}</p>
+                        <p class="text-zinc-400 text-sm">🚚 Entrega: <span class="text-blue-400">${entrega}</span></p>
                     </div>
-                    <p class="text-zinc-400 text-sm mb-1">📅 Solicitado em: ${data}</p>
-                    <p class="text-zinc-400 text-sm">🚚 Previsão: <span class="text-blue-400">${entrega}</span></p>
-                    ${pedido.video_bruto_url ? `<a href="${pedido.video_bruto_url}" target="_blank" class="text-xs text-blue-500 hover:underline mt-2 inline-block">📹 Ver vídeo enviado</a>` : ''}
-                </div>
-                <div class="text-right w-full md:w-auto mt-2 md:mt-0">
-                    <p class="text-[10px] text-zinc-600 uppercase tracking-widest mb-1">Última atualização</p>
-                    <p class="text-zinc-400 font-mono text-xs">${dataAtualizacao}</p>
                 </div>
             </div>
         `;
     });
 
     lista.innerHTML = html;
-}
-
-// 4. FUNÇÃO SAIR
-async function sair() {
-    await supabaseClient.auth.signOut();
-    window.location.href = "index.html";
 }
