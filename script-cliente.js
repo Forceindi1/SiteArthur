@@ -2,46 +2,80 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
-console.log("SCRIPT CLIENTE V10.0 (GALERIA VIP) - CARREGADO");
+console.log("SCRIPT CLIENTE V13.0 (CORREÇÃO TOTAL) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let userAtual = null;
 
-// --- 1. AO CARREGAR A PÁGINA (window.onload) ---
+// --- 1. AO CARREGAR A PÁGINA ---
 window.onload = async () => {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) { window.location.href = "login.html"; return; }
-    userAtual = user;
+    // Verifica sessão
+    const { data: { session } } = await supabaseClient.auth.getSession();
     
-    // Carrega tudo que precisa aparecer de início
-    await carregarDadosPerfil();
-    await carregarGaleriaVip(); // <--- ADICIONEI AQUI A CHAMADA!
+    if (!session) { 
+        window.location.href = "login.html"; 
+        return; 
+    }
+    
+    userAtual = session.user;
+    console.log("Usuário logado:", userAtual.id);
+
+    // Carrega dados em paralelo
+    await Promise.all([
+        carregarDadosPerfil(),
+        carregarGaleriaVip()
+    ]);
 };
 
 // --- FUNÇÕES DE PERFIL ---
 async function carregarDadosPerfil() {
-    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', userAtual.id).single();
-    if(!profile) return;
-    document.getElementById('user-name').innerText = profile.nome || 'Cliente';
-    document.getElementById('sidebar-avatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nome)}&background=2563eb&color=fff`;
-    
-    // Preenche inputs do perfil
-    const elNome = document.getElementById('perfil-nome'); if(elNome) elNome.value = profile.nome || '';
-    const elZap = document.getElementById('perfil-whatsapp'); if(elZap) elZap.value = profile.whatsapp || '';
-    const elEmail = document.getElementById('perfil-email'); if(elEmail) elEmail.value = profile.email || userAtual.email;
-    const elPrev = document.getElementById('preview-avatar'); if(elPrev && profile.avatar_url) elPrev.src = profile.avatar_url;
+    try {
+        const { data: profile, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', userAtual.id)
+            .single();
+
+        if (error) throw error;
+
+        // Atualiza Sidebar
+        const nomeExibicao = profile.nome || 'Cliente';
+        document.getElementById('user-name').innerText = nomeExibicao;
+        
+        // Atualiza Avatar (Sidebar)
+        const avatarUrl = profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(nomeExibicao)}&background=2563eb&color=fff`;
+        const sidebarAvatar = document.getElementById('sidebar-avatar');
+        if(sidebarAvatar) sidebarAvatar.src = avatarUrl;
+
+        // Preenche Formulário da aba "Meu Perfil"
+        const elNome = document.getElementById('perfil-nome'); 
+        if(elNome) elNome.value = profile.nome || '';
+        
+        const elZap = document.getElementById('perfil-whatsapp'); 
+        if(elZap) elZap.value = profile.whatsapp || '';
+        
+        const elEmail = document.getElementById('perfil-email'); 
+        if(elEmail) elEmail.value = profile.email || userAtual.email;
+
+        // Preview da foto na aba perfil
+        const elPrev = document.getElementById('preview-avatar'); 
+        if(elPrev) elPrev.src = avatarUrl;
+
+    } catch (err) {
+        console.error("Erro ao carregar perfil:", err);
+        document.getElementById('user-name').innerText = userAtual.email; // Fallback
+    }
 }
 
-// --- FUNÇÃO NOVA: CARREGAR GALERIA VIP ---
-// (Pode ficar aqui ou no final, tanto faz, desde que exista no arquivo)
+// --- GALERIA VIP ---
 async function carregarGaleriaVip() {
     const container = document.getElementById('lista-vip-cliente');
-    if(!container) return; // Se não achar a div, para (evita erro)
+    if(!container) return;
 
     const { data: videos } = await supabaseClient.from('vip_videos').select('*').order('created_at', {ascending: false});
 
     if (!videos || videos.length === 0) {
-        container.innerHTML = '<p class="text-zinc-500 italic">Nenhum vídeo disponível no momento.</p>';
+        container.innerHTML = '<p class="text-zinc-500 italic">Nenhum vídeo exclusivo disponível no momento.</p>';
         return;
     }
 
@@ -62,11 +96,16 @@ async function carregarGaleriaVip() {
     `).join('');
 }
 
-// --- FORMULÁRIO DE PEDIDO ---
+// --- ENVIAR PEDIDO (COM NOTIFICAÇÃO WHATSAPP) ---
 const formPedido = document.getElementById('form-pedido');
 if (formPedido) {
     formPedido.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        // --- SEU NÚMERO AQUI ---
+        const telefoneGestor = "5511989930723"; 
+        // -----------------------
+
         const titulo = document.getElementById('titulo').value;
         const descricao = document.getElementById('descricao').value;
         const arquivo = document.getElementById('arquivo-video').files[0];
@@ -83,12 +122,16 @@ if (formPedido) {
         btn.innerText = "Enviando... (Aguarde)";
 
         try {
+            // 1. Upload
             const nomeLimpo = arquivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
-            const nomeArquivo = `${Date.now()}_${nomeLimpo}`; 
+            const nomeArquivo = `${userAtual.id}_${Date.now()}_${nomeLimpo}`; 
+            
             const { error: uploadError } = await supabaseClient.storage.from('videos').upload(nomeArquivo, arquivo);
             if (uploadError) throw uploadError;
+
             const { data: urlData } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
 
+            // 2. Insert DB
             const { error: dbError } = await supabaseClient.from('orders').insert([{
                 client_id: userAtual.id,
                 titulo_ideia: titulo,
@@ -100,9 +143,19 @@ if (formPedido) {
             }]);
 
             if (dbError) throw dbError;
-            alert("Pedido enviado!");
+
+            // 3. Notificação WhatsApp
+            const textoMensagem = `🚀 *Novo Pedido Recebido!*\n\n🎬 *Título:* ${titulo}\n📄 *Plano:* ${planoSelecionado.toUpperCase()}\n👤 *Cliente:* ${userAtual.email}\n\n_Acesse o painel para ver o vídeo._`;
+            const linkZap = `https://wa.me/${telefoneGestor}?text=${encodeURIComponent(textoMensagem)}`;
+            
+            // Abre WhatsApp
+            window.open(linkZap, '_blank');
+
+            alert("Pedido enviado! Verifique seu WhatsApp para confirmar com o gestor.");
             window.location.reload(); 
+            
         } catch (error) {
+            console.error(error);
             alert("Erro: " + error.message);
             btn.disabled = false;
             btn.innerText = "Enviar Pedido";
@@ -119,37 +172,64 @@ if(formPerfil) {
         const nome = document.getElementById('perfil-nome').value;
         const whatsapp = document.getElementById('perfil-whatsapp').value;
         const fotoArquivo = document.getElementById('input-avatar').files[0];
+        
         const btn = e.target.querySelector('button');
         const loader = document.getElementById('loading-perfil');
         btn.disabled = true;
         loader.style.display = 'block';
+
         try {
             let publicAvatarUrl = null;
             if (fotoArquivo) {
-                const nomeArquivo = `${userAtual.id}_${Date.now()}`;
+                const nomeArquivo = `avatar_${userAtual.id}_${Date.now()}`;
                 const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(nomeArquivo, fotoArquivo, { upsert: true });
                 if (uploadError) throw uploadError;
                 const { data } = supabaseClient.storage.from('avatars').getPublicUrl(nomeArquivo);
                 publicAvatarUrl = data.publicUrl;
             }
+
             const atualizacao = { nome, whatsapp, updated_at: new Date() };
             if (publicAvatarUrl) atualizacao.avatar_url = publicAvatarUrl;
-            const { error: dbError } = await supabaseClient.from('profiles').update(atualizacao).eq('id', userAtual.id);
+
+            const { error: dbError } = await supabaseClient
+                .from('profiles')
+                .update(atualizacao)
+                .eq('id', userAtual.id);
+
             if (dbError) throw dbError;
+
             alert("Perfil atualizado!");
             await carregarDadosPerfil();
-        } catch (error) { alert("Erro: " + error.message); } finally { btn.disabled = false; loader.style.display = 'none'; }
+
+        } catch (error) {
+            alert("Erro: " + error.message);
+        } finally {
+            btn.disabled = false;
+            loader.style.display = 'none';
+        }
     });
 }
 
-// --- CARREGAR PEDIDOS ---
+// --- CARREGAR PEDIDOS (HISTÓRICO) ---
 async function carregarPedidos() {
     const lista = document.getElementById('lista-pedidos');
     if(!lista) return;
-    lista.innerHTML = '<p class="text-zinc-500">Atualizando...</p>';
-    const { data: pedidos, error } = await supabaseClient.from('orders').select('*').eq('client_id', userAtual.id).order('data_solicitacao', { ascending: false });
 
-    if (error || !pedidos || pedidos.length === 0) {
+    lista.innerHTML = '<p class="text-zinc-500">Atualizando...</p>';
+
+    const { data: pedidos, error } = await supabaseClient
+        .from('orders')
+        .select('*')
+        .eq('client_id', userAtual.id)
+        .order('data_solicitacao', { ascending: false });
+
+    if (error) {
+        console.error(error);
+        lista.innerHTML = '<p class="text-red-500">Erro ao carregar pedidos.</p>';
+        return;
+    }
+
+    if (!pedidos || pedidos.length === 0) {
         lista.innerHTML = '<p class="text-zinc-500">Nenhum pedido encontrado.</p>';
         return;
     }
@@ -162,7 +242,7 @@ async function carregarPedidos() {
         
         let botaoDownload = '';
         if(pedido.status === 'finalizado' && pedido.link_entrega) {
-            botaoDownload = `<div class="mt-4"><a href="${pedido.link_entrega}" target="_blank" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full">Baixar Vídeo</a></div>`;
+            botaoDownload = `<div class="mt-4"><a href="${pedido.link_entrega}" target="_blank" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full">Baixar Vídeo Pronto</a></div>`;
         }
 
         return `
