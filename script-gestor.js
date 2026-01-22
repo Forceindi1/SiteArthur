@@ -1,6 +1,6 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
-console.log("SCRIPT GESTOR V5.0 (UPLOAD VIP) - CARREGADO");
+console.log("SCRIPT GESTOR V6.0 (PORTFOLIO MANAGER) - CARREGADO");
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 const TABELA_PRECOS = { 'basico': 50.00, 'intermediario': 100.00, 'avancado': 200.00 };
@@ -83,7 +83,40 @@ window.salvarPlanos = async function() {
 }
 window.apagarComentario = async function(id) { if(confirm("Apagar?")) { await supabaseClient.from('public_comments').delete().eq('id', id); window.carregarDadosSite(); } }
 
-// VIP MANAGER (COM UPLOAD)
+// --- PORTFÓLIO MANAGER (NOVO) ---
+window.carregarPortfolio = async function() {
+    const { data: videos } = await supabaseClient.from('portfolio').select('*').order('created_at', {ascending: false});
+    document.getElementById('lista-portfolio-manager').innerHTML = (videos || []).map(v => `
+        <div class="bg-zinc-900 border border-green-900/30 p-2 rounded flex justify-between items-center">
+            <div class="truncate">
+                <p class="font-bold text-white text-sm">${v.titulo}</p>
+                <a href="${v.video_url}" target="_blank" class="text-xs text-green-400 hover:underline">Ver Vídeo</a>
+            </div>
+            <button onclick="removerPortfolio(${v.id})" class="text-red-500 hover:bg-red-900/20 p-2 rounded"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
+}
+window.adicionarPortfolio = async function() {
+    const titulo = document.getElementById('novo-port-titulo').value;
+    const arquivo = document.getElementById('novo-port-file').files[0];
+    if(!titulo || !arquivo) return alert("Preencha título e arquivo!");
+    
+    const btn = event.target; btn.innerText = "Enviando..."; btn.disabled = true;
+    const nomeArquivo = `port_${Date.now()}_${arquivo.name.replace(/\s/g, '_')}`;
+    const { error: uploadError } = await supabaseClient.storage.from('videos').upload(nomeArquivo, arquivo);
+    if(uploadError) { alert("Erro upload: " + uploadError.message); btn.innerText = "Adicionar"; btn.disabled = false; return; }
+    
+    const { data } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
+    const { error } = await supabaseClient.from('portfolio').insert([{ titulo, video_url: data.publicUrl }]);
+    
+    if(error) alert("Erro banco: " + error.message);
+    else { alert("Adicionado ao Portfólio!"); document.getElementById('novo-port-titulo').value = ''; document.getElementById('novo-port-file').value = ''; window.carregarPortfolio(); }
+    btn.innerText = "Adicionar ao Site"; btn.disabled = false;
+}
+window.removerPortfolio = async function(id) { if(confirm("Remover do site?")) { await supabaseClient.from('portfolio').delete().eq('id', id); window.carregarPortfolio(); } }
+
+
+// VIP MANAGER
 window.carregarVipManager = async function() {
     const { data: videos } = await supabaseClient.from('vip_videos').select('*').order('created_at', {ascending: false});
     document.getElementById('lista-vip-manager').innerHTML = (videos || []).map(v => `<div class="bg-zinc-900 border border-zinc-700 p-2 rounded flex justify-between items-center"><div class="truncate"><p class="font-bold text-white text-sm">${v.titulo}</p><a href="${v.video_url}" target="_blank" class="text-xs text-blue-400 hover:underline">Ver Vídeo</a></div><button onclick="removerVip(${v.id})" class="text-red-500 hover:bg-red-900/20 p-2 rounded"><i class="fas fa-trash"></i></button></div>`).join('');
@@ -96,14 +129,14 @@ window.adicionarVideoVIP = async function() {
     const btn = event.target; btn.innerText = "Enviando..."; btn.disabled = true;
     const nomeArquivo = `vip_${Date.now()}_${arquivo.name.replace(/\s/g, '_')}`;
     const { error: uploadError } = await supabaseClient.storage.from('videos').upload(nomeArquivo, arquivo);
-    if(uploadError) { alert("Erro upload: " + uploadError.message); btn.innerText = "Salvar"; btn.disabled = false; return; }
+    if(uploadError) { alert("Erro upload: " + uploadError.message); btn.innerText = "Adicionar VIP"; btn.disabled = false; return; }
     
     const { data } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
     const { error } = await supabaseClient.from('vip_videos').insert([{ titulo, video_url: data.publicUrl }]);
     
     if(error) alert("Erro banco: " + error.message);
     else { alert("Vídeo Adicionado!"); document.getElementById('novo-vip-titulo').value = ''; document.getElementById('novo-vip-file').value = ''; window.carregarVipManager(); }
-    btn.innerText = "Upload e Salvar"; btn.disabled = false;
+    btn.innerText = "Adicionar VIP"; btn.disabled = false;
 }
 window.removerVip = async function(id) { if(confirm("Remover?")) { await supabaseClient.from('vip_videos').delete().eq('id', id); window.carregarVipManager(); } }
 
