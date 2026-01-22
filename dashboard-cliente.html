@@ -11,7 +11,13 @@
         .sidebar { background:#121212; border-right:1px solid #232323; min-height:100vh; }
         .card { background:#161616; border:1px solid #2a2a2a; border-radius:16px; }
         
-        /* Loader e Animações */
+        /* Tooltip Personalizado */
+        .tooltip { visibility: hidden; opacity: 0; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); 
+                   background: #000; border: 1px solid #333; padding: 10px; border-radius: 8px; width: 200px; 
+                   text-align: center; font-size: 0.75rem; color: #ccc; z-index: 10; transition: all 0.2s; margin-bottom: 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);pointer-events: none; }
+        .group:hover .tooltip { visibility: visible; opacity: 1; }
+        
+        /* Loader */
         .loader { border: 4px solid #333; border-top: 4px solid #3b82f6; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display:none; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.3s ease-in; }
@@ -35,7 +41,6 @@
                 <button onclick="mostrarAba('perfil')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-user-cog w-5"></i> Meu Perfil</button>
             </nav>
         </div>
-        
         <button onclick="sair()" class="w-full text-left p-3 rounded hover:bg-red-900/20 text-red-400 flex items-center gap-3 mt-4 md:mt-0 transition"><i class="fas fa-sign-out-alt"></i> Sair</button>
     </aside>
 
@@ -51,32 +56,51 @@
                     <label class="block text-zinc-400 text-sm mb-2">Descrição Detalhada</label>
                     <textarea id="descricao" rows="4" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white transition"></textarea>
 
-                    <label class="block text-zinc-400 text-sm mb-2 mt-4">Escolha seu Plano</label>
+                    <label class="block text-zinc-400 text-sm mb-2 mt-4">Escolha seu Plano (Passe o mouse para ver detalhes)</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <label class="cursor-pointer">
+                        
+                        <label class="cursor-pointer relative group">
                             <input type="radio" name="plano" value="basico" class="peer sr-only" required>
                             <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition hover:bg-zinc-800 text-center">
                                 <p class="font-bold text-white">Básico</p>
                                 <p class="text-xs text-zinc-500 mt-1">Cortes simples</p>
                             </div>
+                            <div class="tooltip">Ideal para vlogs simples. Inclui cortes secos, remoção de erros e tratamento de cor básico.</div>
                         </label>
                         
-                        <label class="cursor-pointer">
+                        <label class="cursor-pointer relative group">
                             <input type="radio" name="plano" value="intermediario" class="peer sr-only">
                             <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-purple-500 peer-checked:bg-purple-900/20 transition hover:bg-zinc-800 text-center">
                                 <p class="font-bold text-white">Intermediário</p>
                                 <p class="text-xs text-zinc-500 mt-1">Legendas e Efeitos</p>
                             </div>
+                            <div class="tooltip">Perfeito para Reels falados. Inclui legendas dinâmicas, zoom in/out e trilha sonora sincronizada.</div>
                         </label>
 
-                        <label class="cursor-pointer">
+                        <label class="cursor-pointer relative group">
                             <input type="radio" name="plano" value="avancado" class="peer sr-only">
                             <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-yellow-500 peer-checked:bg-yellow-900/20 transition hover:bg-zinc-800 text-center">
                                 <p class="font-bold text-white">Avançado</p>
                                 <p class="text-xs text-zinc-500 mt-1">Motion Graphics</p>
                             </div>
+                            <div class="tooltip">Edição de alto nível. Inclui animações, efeitos visuais complexos e sound design avançado.</div>
                         </label>
                     </div>
+
+                    <label class="flex items-start gap-4 p-4 border border-zinc-700 rounded-xl bg-zinc-900/50 hover:bg-zinc-800 cursor-pointer transition mb-6 group">
+                        <div class="relative flex items-center">
+                            <input type="checkbox" id="adicional-thumbnail" class="w-6 h-6 border-zinc-600 rounded bg-zinc-800 accent-blue-600 focus:ring-blue-500 focus:ring-2">
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center">
+                                <p class="font-bold text-white group-hover:text-blue-400 transition">Capa Personalizada (Thumbnail)</p>
+                                <span class="bg-green-900/30 text-green-400 border border-green-900 text-xs px-2 py-1 rounded font-bold">+ R$ 50,00</span>
+                            </div>
+                            <p class="text-xs text-zinc-400 mt-1 leading-relaxed">
+                                Crie uma primeira impressão impactante para atrair mais cliques no seu Reels ou TikTok. Entregamos a arte pronta junto com o vídeo.
+                            </p>
+                        </div>
+                    </label>
 
                     <label class="block text-zinc-400 text-sm mb-2">Upload do Vídeo Bruto</label>
                     <div class="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer relative bg-zinc-900/50">
@@ -105,51 +129,32 @@
                 <div class="flex flex-col items-center mb-8">
                     <div class="relative group cursor-pointer">
                         <img src="https://ui-avatars.com/api/?name=User" id="preview-avatar" class="w-32 h-32 rounded-full object-cover border-4 border-zinc-800 shadow-xl group-hover:opacity-50 transition">
-                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                            <i class="fas fa-camera text-2xl text-white"></i>
-                        </div>
                         <input type="file" id="input-avatar" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
                     </div>
                     <p class="text-sm text-zinc-500 mt-3">Clique na foto para alterar</p>
                 </div>
-
                 <form id="form-perfil" class="space-y-4">
-                    <div>
-                        <label class="block text-zinc-400 text-sm mb-1">Seu Nome</label>
-                        <input type="text" id="perfil-nome" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white focus:border-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-zinc-400 text-sm mb-1">WhatsApp</label>
-                        <input type="text" id="perfil-whatsapp" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white focus:border-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-zinc-400 text-sm mb-1">E-mail</label>
-                        <input type="text" id="perfil-email" disabled class="w-full bg-zinc-900/50 border border-zinc-800 rounded p-3 text-zinc-500 cursor-not-allowed">
-                    </div>
-
+                    <div><label class="block text-zinc-400 text-sm mb-1">Seu Nome</label><input type="text" id="perfil-nome" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white"></div>
+                    <div><label class="block text-zinc-400 text-sm mb-1">WhatsApp</label><input type="text" id="perfil-whatsapp" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white"></div>
+                    <div><label class="block text-zinc-400 text-sm mb-1">E-mail</label><input type="text" id="perfil-email" disabled class="w-full bg-zinc-900/50 border border-zinc-800 rounded p-3 text-zinc-500"></div>
                     <div class="loader" id="loading-perfil"></div>
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-green-900/20">Salvar Alterações</button>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg">Salvar Alterações</button>
                 </form>
             </div>
         </section>
-
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-cliente.js?v=7"></script> <script>
-        // Funções visuais da página
+    <script src="script-cliente.js?v=8"></script> <script>
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
             if(aba === 'pedidos') carregarPedidos();
         }
-
         document.getElementById('arquivo-video').addEventListener('change', function(){
-            const nome = this.files[0] ? this.files[0].name : "Arraste ou clique para selecionar";
-            document.getElementById('file-name').innerText = nome;
+            document.getElementById('file-name').innerText = this.files[0] ? this.files[0].name : "Selecionar vídeo";
             document.getElementById('file-name').classList.add('text-blue-400');
         });
-
         document.getElementById('input-avatar').addEventListener('change', function(e){
             const file = e.target.files[0];
             if(file){
