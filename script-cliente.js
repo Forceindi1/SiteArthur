@@ -2,30 +2,67 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
 
-console.log("SCRIPT CLIENTE V8.0 (THUMBNAIL) - CARREGADO");
+console.log("SCRIPT CLIENTE V10.0 (GALERIA VIP) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 let userAtual = null;
 
+// --- 1. AO CARREGAR A PÁGINA (window.onload) ---
 window.onload = async () => {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) { window.location.href = "login.html"; return; }
     userAtual = user;
+    
+    // Carrega tudo que precisa aparecer de início
     await carregarDadosPerfil();
+    await carregarGaleriaVip(); // <--- ADICIONEI AQUI A CHAMADA!
 };
 
+// --- FUNÇÕES DE PERFIL ---
 async function carregarDadosPerfil() {
     const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', userAtual.id).single();
     if(!profile) return;
     document.getElementById('user-name').innerText = profile.nome || 'Cliente';
     document.getElementById('sidebar-avatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nome)}&background=2563eb&color=fff`;
-    document.getElementById('perfil-nome').value = profile.nome || '';
-    document.getElementById('perfil-whatsapp').value = profile.whatsapp || '';
-    document.getElementById('perfil-email').value = profile.email || userAtual.email;
-    if(profile.avatar_url) document.getElementById('preview-avatar').src = profile.avatar_url;
+    
+    // Preenche inputs do perfil
+    const elNome = document.getElementById('perfil-nome'); if(elNome) elNome.value = profile.nome || '';
+    const elZap = document.getElementById('perfil-whatsapp'); if(elZap) elZap.value = profile.whatsapp || '';
+    const elEmail = document.getElementById('perfil-email'); if(elEmail) elEmail.value = profile.email || userAtual.email;
+    const elPrev = document.getElementById('preview-avatar'); if(elPrev && profile.avatar_url) elPrev.src = profile.avatar_url;
 }
 
-// FORMULÁRIO DE PEDIDO
+// --- FUNÇÃO NOVA: CARREGAR GALERIA VIP ---
+// (Pode ficar aqui ou no final, tanto faz, desde que exista no arquivo)
+async function carregarGaleriaVip() {
+    const container = document.getElementById('lista-vip-cliente');
+    if(!container) return; // Se não achar a div, para (evita erro)
+
+    const { data: videos } = await supabaseClient.from('vip_videos').select('*').order('created_at', {ascending: false});
+
+    if (!videos || videos.length === 0) {
+        container.innerHTML = '<p class="text-zinc-500 italic">Nenhum vídeo disponível no momento.</p>';
+        return;
+    }
+
+    container.innerHTML = videos.map(v => `
+        <div class="card p-0 overflow-hidden group border border-zinc-800 bg-[#161616] rounded-xl">
+            <div class="relative">
+                <video controls class="w-full h-48 object-cover bg-black">
+                    <source src="${v.video_url}" type="video/mp4">
+                </video>
+                <div class="absolute top-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded border border-zinc-700">
+                    <i class="fas fa-eye-slash text-yellow-500 mr-1"></i> Confidencial
+                </div>
+            </div>
+            <div class="p-4">
+                <h3 class="font-bold text-white text-lg">${v.titulo}</h3>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- FORMULÁRIO DE PEDIDO ---
 const formPedido = document.getElementById('form-pedido');
 if (formPedido) {
     formPedido.addEventListener('submit', async (e) => {
@@ -33,11 +70,9 @@ if (formPedido) {
         const titulo = document.getElementById('titulo').value;
         const descricao = document.getElementById('descricao').value;
         const arquivo = document.getElementById('arquivo-video').files[0];
-        
-        // DADOS NOVOS
         const planoInput = document.querySelector('input[name="plano"]:checked');
         const planoSelecionado = planoInput ? planoInput.value : 'basico';
-        const querThumbnail = document.getElementById('adicional-thumbnail').checked; // <--- CAPTURA O CHECKBOX
+        const querThumbnail = document.getElementById('adicional-thumbnail')?.checked || false;
 
         if (!arquivo) { alert("Selecione um vídeo."); return; }
 
@@ -50,10 +85,8 @@ if (formPedido) {
         try {
             const nomeLimpo = arquivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
             const nomeArquivo = `${Date.now()}_${nomeLimpo}`; 
-            
             const { error: uploadError } = await supabaseClient.storage.from('videos').upload(nomeArquivo, arquivo);
             if (uploadError) throw uploadError;
-
             const { data: urlData } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
 
             const { error: dbError } = await supabaseClient.from('orders').insert([{
@@ -63,14 +96,12 @@ if (formPedido) {
                 video_bruto_url: urlData.publicUrl,
                 status: 'pendente',
                 plano_escolhido: planoSelecionado,
-                adicional_thumbnail: querThumbnail // <--- SALVA NO BANCO
+                adicional_thumbnail: querThumbnail
             }]);
 
             if (dbError) throw dbError;
-
-            alert("Pedido enviado com sucesso!");
+            alert("Pedido enviado!");
             window.location.reload(); 
-            
         } catch (error) {
             alert("Erro: " + error.message);
             btn.disabled = false;
@@ -80,7 +111,7 @@ if (formPedido) {
     });
 }
 
-// SALVAR PERFIL (IGUAL)
+// --- SALVAR PERFIL ---
 const formPerfil = document.getElementById('form-perfil');
 if(formPerfil) {
     formPerfil.addEventListener('submit', async (e) => {
@@ -111,6 +142,7 @@ if(formPerfil) {
     });
 }
 
+// --- CARREGAR PEDIDOS ---
 async function carregarPedidos() {
     const lista = document.getElementById('lista-pedidos');
     if(!lista) return;
@@ -126,7 +158,6 @@ async function carregarPedidos() {
         const data = new Date(pedido.data_solicitacao).toLocaleDateString('pt-BR');
         const entrega = pedido.data_entrega ? new Date(pedido.data_entrega).toLocaleDateString('pt-BR') : 'A definir';
         const plano = pedido.plano_escolhido ? pedido.plano_escolhido.toUpperCase() : 'BÁSICO';
-        // Mostra se pediu capa
         const seloCapa = pedido.adicional_thumbnail ? '<span class="ml-2 px-2 py-1 rounded text-xs font-bold bg-green-900 border border-green-700 text-green-300">+ CAPA</span>' : '';
         
         let botaoDownload = '';
@@ -153,6 +184,7 @@ async function carregarPedidos() {
     }).join('');
 }
 
+// --- SAIR ---
 async function sair() {
     await supabaseClient.auth.signOut();
     window.location.href = "index.html";
