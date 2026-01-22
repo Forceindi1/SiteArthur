@@ -9,17 +9,15 @@
     <style>
         body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; }
         .sidebar { background:#121212; border-right:1px solid #232323; min-height:100vh; }
-        
-        /* Status Badges */
         .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
         .st-pendente { background: #451a03; color: #fbbf24; border: 1px solid #78350f; }
         .st-em_andamento { background: #1e1b4b; color: #818cf8; border: 1px solid #312e81; }
         .st-finalizado { background: #064e3b; color: #34d399; border: 1px solid #065f46; }
-
-        /* Tabela */
         th { text-align: left; padding: 12px; color: #71717a; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #27272a; }
         td { padding: 16px 12px; border-bottom: 1px solid #1f1f22; font-size: 0.9rem; }
         tr:hover { background: #18181b; }
+        input, textarea { background: #09090b; border: 1px solid #27272a; color: white; padding: 8px; rounded: 4px; width: 100%; outline: none; }
+        input:focus, textarea:focus { border-color: #3b82f6; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row">
@@ -34,6 +32,9 @@
             <button onclick="mostrarAba('visao-geral')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-chart-pie w-5"></i> Visão Geral</button>
             <button onclick="mostrarAba('pedidos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-tasks w-5"></i> Todos os Pedidos</button>
             <button onclick="mostrarAba('usuarios')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-users-cog w-5"></i> Equipe e Clientes</button>
+            <div class="border-t border-zinc-800 my-2"></div>
+            <button onclick="mostrarAba('site-editor')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-blue-400 flex items-center gap-3 transition font-bold"><i class="fas fa-edit w-5"></i> Editar Site & Planos</button>
+            <button onclick="mostrarAba('vip-manager')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-yellow-400 flex items-center gap-3 transition font-bold"><i class="fas fa-lock w-5"></i> Galeria VIP</button>
         </nav>
 
         <div class="mt-auto pt-6 border-t border-zinc-800">
@@ -53,84 +54,87 @@
         <section id="aba-visao-geral" class="fade-in">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-3xl font-bold">Dashboard</h2>
-                
                 <button onclick="baixarRelatorio()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2 shadow-lg shadow-green-900/20 transition">
                     <i class="fas fa-file-excel"></i> Exportar Dados (Excel)
                 </button>
             </div>
-            
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800">
-                    <p class="text-zinc-400 text-sm font-bold uppercase">Total Pedidos</p>
-                    <p class="text-3xl font-bold text-white mt-2" id="kpi-total">0</p>
-                </div>
-                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800">
-                    <p class="text-yellow-500 text-sm font-bold uppercase">Pendentes</p>
-                    <p class="text-3xl font-bold text-white mt-2" id="kpi-pendentes">0</p>
-                </div>
-                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800">
-                    <p class="text-blue-500 text-sm font-bold uppercase">Em Produção</p>
-                    <p class="text-3xl font-bold text-white mt-2" id="kpi-andamento">0</p>
-                </div>
-                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800">
-                    <p class="text-green-500 text-sm font-bold uppercase">Finalizados</p>
-                    <p class="text-3xl font-bold text-white mt-2" id="kpi-finalizados">0</p>
-                </div>
+                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800"><p class="text-zinc-400 text-sm font-bold uppercase">Total Pedidos</p><p class="text-3xl font-bold text-white mt-2" id="kpi-total">0</p></div>
+                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800"><p class="text-yellow-500 text-sm font-bold uppercase">Pendentes</p><p class="text-3xl font-bold text-white mt-2" id="kpi-pendentes">0</p></div>
+                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800"><p class="text-blue-500 text-sm font-bold uppercase">Em Produção</p><p class="text-3xl font-bold text-white mt-2" id="kpi-andamento">0</p></div>
+                <div class="bg-[#161616] p-6 rounded-xl border border-zinc-800"><p class="text-green-500 text-sm font-bold uppercase">Finalizados</p><p class="text-3xl font-bold text-white mt-2" id="kpi-finalizados">0</p></div>
             </div>
-
             <h3 class="text-xl font-bold mb-4">Últimas Movimentações</h3>
             <div class="bg-[#161616] border border-zinc-800 rounded-xl overflow-hidden">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Projeto</th>
-                            <th>Cliente</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-recentes">
-                        <tr><td colspan="4" class="text-center text-zinc-500 py-4">Carregando...</td></tr>
-                    </tbody>
-                </table>
+                <table class="w-full"><thead><tr><th>ID</th><th>Projeto</th><th>Cliente</th><th>Status</th></tr></thead><tbody id="tabela-recentes"></tbody></table>
             </div>
         </section>
 
         <section id="aba-pedidos" class="hidden">
             <h2 class="text-3xl font-bold mb-6">Controle de Pedidos</h2>
             <div class="bg-[#161616] border border-zinc-800 rounded-xl overflow-hidden">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Título</th>
-                            <th>Cliente</th>
-                            <th>Editor Responsável</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabela-completa">
-                        </tbody>
-                </table>
+                <table class="w-full"><thead><tr><th>Data</th><th>Título</th><th>Cliente</th><th>Editor</th><th>Status</th><th>Ações</th></tr></thead><tbody id="tabela-completa"></tbody></table>
             </div>
         </section>
 
         <section id="aba-usuarios" class="hidden">
             <h2 class="text-3xl font-bold mb-6">Gerenciar Equipe e Clientes</h2>
-            <p class="text-zinc-400 mb-6">Promova usuários a "Editor" para que eles possam aceitar tarefas.</p>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="lista-usuarios"></div>
+        </section>
+
+        <section id="aba-site-editor" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Editar Site Principal</h2>
             
-            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3" id="lista-usuarios">
+            <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8">
+                <h3 class="text-xl font-bold text-blue-400 mb-4">💰 Valores e Planos</h3>
+                <div id="lista-planos-editor" class="space-y-4">
+                    </div>
+                <button onclick="salvarPlanos()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">Salvar Alterações nos Planos</button>
+            </div>
+
+            <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl">
+                <h3 class="text-xl font-bold text-green-400 mb-4">💬 Comentários Públicos</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead><tr><th>Data</th><th>Nome</th><th>Comentário</th><th>Nota</th><th>Ação</th></tr></thead>
+                        <tbody id="tabela-comentarios"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="aba-vip-manager" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Gerenciar Galeria VIP (Clientes)</h2>
+            
+            <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8 flex gap-4 items-end">
+                <div class="flex-1">
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Título do Vídeo</label>
+                    <input type="text" id="novo-vip-titulo" placeholder="Ex: Lançamento X">
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Link do Vídeo (MP4/URL)</label>
+                    <input type="text" id="novo-vip-url" placeholder="https://...">
+                </div>
+                <button onclick="adicionarVideoVIP()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">Adicionar</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lista-vip-manager">
                 </div>
         </section>
 
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-gestor.js?v=2"></script> <script>
+    <script src="script-gestor.js?v=3"></script> 
+
+    <script>
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
+            
+            // Carrega dados específicos da aba
+            if(aba === 'site-editor') window.carregarDadosSite();
+            if(aba === 'vip-manager') window.carregarVipManager();
         }
     </script>
 </body>
