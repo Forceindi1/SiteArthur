@@ -17,7 +17,6 @@
         td { padding: 16px 12px; border-bottom: 1px solid #1f1f22; font-size: 0.9rem; }
         tr:hover { background: #18181b; }
         input, textarea { background: #09090b; border: 1px solid #27272a; color: white; padding: 8px; rounded: 4px; width: 100%; outline: none; }
-        input:focus, textarea:focus { border-color: #3b82f6; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row">
@@ -84,55 +83,41 @@
 
         <section id="aba-site-editor" class="hidden">
             <h2 class="text-3xl font-bold mb-6">Editar Site Principal</h2>
-            
             <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8">
                 <h3 class="text-xl font-bold text-blue-400 mb-4">💰 Valores e Planos</h3>
-                <div id="lista-planos-editor" class="space-y-4">
-                    </div>
-                <button onclick="salvarPlanos()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">Salvar Alterações nos Planos</button>
+                <div id="lista-planos-editor" class="space-y-4"></div>
+                <button onclick="salvarPlanos()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">Salvar Alterações</button>
             </div>
-
             <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl">
                 <h3 class="text-xl font-bold text-green-400 mb-4">💬 Comentários Públicos</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm">
-                        <thead><tr><th>Data</th><th>Nome</th><th>Comentário</th><th>Nota</th><th>Ação</th></tr></thead>
-                        <tbody id="tabela-comentarios"></tbody>
-                    </table>
-                </div>
+                <div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Data</th><th>Nome</th><th>Comentário</th><th>Nota</th><th>Ação</th></tr></thead><tbody id="tabela-comentarios"></tbody></table></div>
             </div>
         </section>
 
         <section id="aba-vip-manager" class="hidden">
-            <h2 class="text-3xl font-bold mb-6">Gerenciar Galeria VIP (Clientes)</h2>
-            
+            <h2 class="text-3xl font-bold mb-6">Gerenciar Galeria VIP</h2>
             <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8 flex gap-4 items-end">
                 <div class="flex-1">
                     <label class="text-xs text-zinc-500 uppercase font-bold">Título do Vídeo</label>
                     <input type="text" id="novo-vip-titulo" placeholder="Ex: Lançamento X">
                 </div>
                 <div class="flex-1">
-                    <label class="text-xs text-zinc-500 uppercase font-bold">Link do Vídeo (MP4/URL)</label>
-                    <input type="text" id="novo-vip-url" placeholder="https://...">
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Arquivo de Vídeo</label>
+                    <input type="file" id="novo-vip-file" accept="video/*" class="text-sm text-zinc-300 w-full pt-1">
                 </div>
-                <button onclick="adicionarVideoVIP()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">Adicionar</button>
+                <button onclick="adicionarVideoVIP()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">Upload e Salvar</button>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lista-vip-manager">
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lista-vip-manager"></div>
         </section>
 
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-gestor.js?v=3"></script> 
-
+    <script src="script-gestor.js?v=5"></script> 
     <script>
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
-            
-            // Carrega dados específicos da aba
             if(aba === 'site-editor') window.carregarDadosSite();
             if(aba === 'vip-manager') window.carregarVipManager();
         }
