@@ -7,6 +7,7 @@
   <link rel="icon" href="assets/favicon.ico">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
   <style>
     :root { color-scheme: dark; scroll-behavior: smooth }
@@ -14,7 +15,6 @@
     .fade-in { opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease }
     .fade-in.visible { opacity:1; transform:translateY(0) }
     .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .4s ease }
-    /* Ajuste para os vídeos no carrossel */
     .swiper-slide video { width: 100%; border-radius: 20px; border: 1px solid #333; }
     .swiper-button-next, .swiper-button-prev { color: #2563eb; } 
     .btn { display:inline-flex; align-items:center; justify-content:center; padding:.9rem 1.4rem; border-radius:12px; font-weight:600; transition:all .3s }
@@ -77,11 +77,12 @@
         <div class="grid md:grid-cols-3 gap-8">
             <div class="bg-black p-8 rounded-2xl border border-zinc-800 hover:border-blue-500 transition relative">
                 <h3 class="text-xl font-bold text-blue-400 mb-2">Básico</h3>
-                <p class="text-3xl font-bold mb-4">R$ 50<span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-3xl font-bold mb-4"><span id="preco-basico">R$ 50</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-sm text-zinc-400 mb-6" id="desc-basico">Cortes simples e tratamento básico.</p>
                 <ul class="space-y-3 text-zinc-400 text-sm mb-8">
                     <li>✅ Cortes Secos & Dinâmicos</li>
                     <li>✅ Tratamento de Cor Básico</li>
-                    <li>✅ Remoção de Erros/Silêncios</li>
+                    <li>✅ Remoção de Erros</li>
                     <li>❌ Legendas Animadas</li>
                 </ul>
                 <a href="cadastro.html" class="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-center rounded-lg font-bold">Começar Agora</a>
@@ -90,24 +91,26 @@
             <div class="bg-black p-8 rounded-2xl border-2 border-purple-600 relative transform md:-translate-y-4 shadow-xl shadow-purple-900/20">
                 <span class="absolute top-0 right-0 bg-purple-600 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MAIS VENDIDO</span>
                 <h3 class="text-xl font-bold text-purple-400 mb-2">Intermediário</h3>
-                <p class="text-3xl font-bold mb-4">R$ 100<span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-3xl font-bold mb-4"><span id="preco-intermediario">R$ 100</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-sm text-zinc-300 mb-6" id="desc-intermediario">Legendas, zoom e efeitos.</p>
                 <ul class="space-y-3 text-zinc-300 text-sm mb-8">
                     <li>✅ Tudo do Básico</li>
-                    <li>✅ Legendas Dinâmicas (Estilo Hormozi)</li>
-                    <li>✅ Zoom In/Out & Efeitos de Câmera</li>
-                    <li>✅ Trilha Sonora Sincronizada</li>
+                    <li>✅ Legendas Dinâmicas</li>
+                    <li>✅ Zoom In/Out & Efeitos</li>
+                    <li>✅ Trilha Sonora</li>
                 </ul>
                 <a href="cadastro.html" class="block w-full py-3 bg-purple-600 hover:bg-purple-700 text-center rounded-lg font-bold">Quero Esse</a>
             </div>
 
             <div class="bg-black p-8 rounded-2xl border border-zinc-800 hover:border-yellow-500 transition relative">
                 <h3 class="text-xl font-bold text-yellow-400 mb-2">Avançado</h3>
-                <p class="text-3xl font-bold mb-4">R$ 200<span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-3xl font-bold mb-4"><span id="preco-avancado">R$ 200</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
+                <p class="text-sm text-zinc-400 mb-6" id="desc-avancado">Motion graphics e nível pro.</p>
                 <ul class="space-y-3 text-zinc-400 text-sm mb-8">
                     <li>✅ Tudo do Intermediário</li>
-                    <li>✅ Motion Graphics & Animações</li>
-                    <li>✅ Sound Design Avançado (SFX)</li>
-                    <li>✅ Banco de Imagens Premium (B-Roll)</li>
+                    <li>✅ Motion Graphics & VFX</li>
+                    <li>✅ Sound Design Avançado</li>
+                    <li>✅ Banco de Imagens</li>
                 </ul>
                 <a href="cadastro.html" class="block w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-center rounded-lg font-bold">Nível Pro</a>
             </div>
@@ -168,6 +171,26 @@
 <script src="script-auth.js"></script>
 
 <script>
+    // --- 1. CONFIGURAÇÃO SUPABASE (Para ler os preços) ---
+    const sbUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
+    const sbKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
+    const supabase = supabase.createClient(sbUrl, sbKey);
+
+    // --- 2. CARREGAR PREÇOS DO BANCO ---
+    async function carregarPlanos() {
+        const { data: planos } = await supabase.from('plans').select('*');
+        if(!planos) return;
+
+        planos.forEach(p => {
+            const elPreco = document.getElementById(`preco-${p.tipo}`);
+            const elDesc = document.getElementById(`desc-${p.tipo}`);
+            
+            if(elPreco) elPreco.innerText = `R$ ${p.preco}`;
+            if(elDesc) elDesc.innerText = p.descricao;
+        });
+    }
+
+    // --- 3. CONFIGURAÇÃO DOS CARROSSEIS ---
     const swiperVideos = new Swiper(".myVideosSwiper", {
         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
         loop: true,
@@ -180,9 +203,11 @@
         autoplay: { delay: 5000 },
     });
 
-    const observer=new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
+    // Animações
+    const observer = new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
     document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
     
+    // Login Funcionário
     document.getElementById('btn-staff-login').addEventListener('click', async () => {
         const email = document.getElementById('staff-email').value;
         const pass = document.getElementById('staff-password').value;
@@ -192,58 +217,12 @@
             alert("Erro: script-auth.js não carregado.");
         }
     });
-</script>
-<script>
-    // 1. Carregar Planos do Banco
-    async function carregarPlanos() {
-        const { data: planos } = await supabase.from('plans').select('*');
-        if(!planos) return;
 
-        planos.forEach(p => {
-            // Procura elementos com ID tipo 'preco-basico' ou 'desc-basico'
-            const elPreco = document.getElementById(`preco-${p.tipo}`);
-            const elDesc = document.getElementById(`desc-${p.tipo}`);
-            
-            if(elPreco) elPreco.innerText = `R$ ${p.preco}`;
-            // Se você tiver um lugar para descrição no HTML, ele atualizaria aqui
-        });
-    }
-
-    // 2. Carregar Comentários
-    async function carregarComentarios() {
-        const { data: comments } = await supabase.from('public_comments').select('*').order('created_at', {ascending: false}).limit(5);
-        const wrapper = document.querySelector('.myCommentsSwiper .swiper-wrapper');
-        if(!comments || !wrapper) return;
-
-        wrapper.innerHTML = comments.map(c => `
-            <div class="swiper-slide">
-                <div class="card p-8 text-center">
-                    <h3 class="font-bold text-xl">${c.nome}</h3>
-                    <div class="text-yellow-500 text-xs mb-2">${'★'.repeat(c.nota)}</div>
-                    <p class="text-zinc-400 mt-2">“${c.comentario}”</p>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // 3. Enviar Novo Comentário
-    async function enviarComentario() {
-        const nome = prompt("Seu nome:");
-        const texto = prompt("Seu comentário:");
-        const nota = prompt("Nota (1 a 5):");
-        
-        if(nome && texto && nota) {
-            await supabase.from('public_comments').insert([{ nome, comentario: texto, nota: parseInt(nota) }]);
-            alert("Obrigado pelo feedback!");
-            carregarComentarios();
-        }
-    }
-
-    // Inicializa
-    window.addEventListener('load', () => {
+    // Iniciar carregamento dos planos
+    window.onload = function() {
         carregarPlanos();
-        carregarComentarios();
-    });
+    };
 </script>
+
 </body>
 </html>
