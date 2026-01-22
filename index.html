@@ -12,8 +12,11 @@
   <style>
     :root { color-scheme: dark; scroll-behavior: smooth }
     body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; overflow-x:hidden }
+    
+    /* Animação suave */
     .fade-in { opacity:0; transform:translateY(20px); transition:opacity 1s ease, transform 1s ease }
     .fade-in.visible { opacity:1; transform:translateY(0) }
+    
     .card { background:#121212; border:1px solid #232323; border-radius:22px; transition:all .4s ease }
     .swiper-slide video { width: 100%; border-radius: 20px; border: 1px solid #333; }
     .swiper-button-next, .swiper-button-prev { color: #2563eb; } 
@@ -78,7 +81,7 @@
             <div class="bg-black p-8 rounded-2xl border border-zinc-800 hover:border-blue-500 transition relative">
                 <h3 class="text-xl font-bold text-blue-400 mb-2">Básico</h3>
                 <p class="text-3xl font-bold mb-4"><span id="preco-basico">R$ 50</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
-                <p class="text-sm text-zinc-400 mb-6" id="desc-basico">Cortes simples e tratamento básico.</p>
+                <p class="text-sm text-zinc-400 mb-6" id="desc-basico">Carregando descrição...</p>
                 <ul class="space-y-3 text-zinc-400 text-sm mb-8">
                     <li>✅ Cortes Secos & Dinâmicos</li>
                     <li>✅ Tratamento de Cor Básico</li>
@@ -92,7 +95,7 @@
                 <span class="absolute top-0 right-0 bg-purple-600 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MAIS VENDIDO</span>
                 <h3 class="text-xl font-bold text-purple-400 mb-2">Intermediário</h3>
                 <p class="text-3xl font-bold mb-4"><span id="preco-intermediario">R$ 100</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
-                <p class="text-sm text-zinc-300 mb-6" id="desc-intermediario">Legendas, zoom e efeitos.</p>
+                <p class="text-sm text-zinc-300 mb-6" id="desc-intermediario">Carregando descrição...</p>
                 <ul class="space-y-3 text-zinc-300 text-sm mb-8">
                     <li>✅ Tudo do Básico</li>
                     <li>✅ Legendas Dinâmicas</li>
@@ -105,7 +108,7 @@
             <div class="bg-black p-8 rounded-2xl border border-zinc-800 hover:border-yellow-500 transition relative">
                 <h3 class="text-xl font-bold text-yellow-400 mb-2">Avançado</h3>
                 <p class="text-3xl font-bold mb-4"><span id="preco-avancado">R$ 200</span><span class="text-sm text-zinc-500 font-normal">/vídeo</span></p>
-                <p class="text-sm text-zinc-400 mb-6" id="desc-avancado">Motion graphics e nível pro.</p>
+                <p class="text-sm text-zinc-400 mb-6" id="desc-avancado">Carregando descrição...</p>
                 <ul class="space-y-3 text-zinc-400 text-sm mb-8">
                     <li>✅ Tudo do Intermediário</li>
                     <li>✅ Motion Graphics & VFX</li>
@@ -123,24 +126,7 @@
   
   <div class="swiper myCommentsSwiper">
     <div class="swiper-wrapper">
-      <div class="swiper-slide">
-        <div class="card p-8 text-center">
-            <h3 class="font-bold text-xl">Rafael Torres</h3>
-            <p class="text-zinc-400 mt-2">“Trabalho impecável, ritmo e cortes incríveis. O Arthur entendeu exatamente a vibe.”</p>
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="card p-8 text-center">
-            <h3 class="font-bold text-xl">Laura Martins</h3>
-            <p class="text-zinc-400 mt-2">“Entrega super rápida e qualidade de cinema. Recomendo demais!”</p>
-        </div>
-      </div>
-      <div class="swiper-slide">
-        <div class="card p-8 text-center">
-            <h3 class="font-bold text-xl">Beatriz Rocha</h3>
-            <p class="text-zinc-400 mt-2">“A edição salvou meu lançamento. Profissionalismo puro.”</p>
-        </div>
-      </div>
+       <div class="swiper-slide"><div class="card p-8 text-center"><p class="text-zinc-500">Carregando avaliações...</p></div></div>
     </div>
     <div class="swiper-button-next"></div>
     <div class="swiper-button-prev"></div>
@@ -167,61 +153,85 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
 <script src="script-auth.js"></script>
 
 <script>
-    // --- 1. CONFIGURAÇÃO SUPABASE (Para ler os preços) ---
+    // 1. ANIMAÇÕES (Roda primeiro para garantir que o site apareça)
+    const observer = new IntersectionObserver(e=>{
+        e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})
+    },{threshold:.15});
+    
+    // Força visibilidade se demorar muito (Segurança contra tela preta)
+    setTimeout(() => {
+        document.querySelectorAll('.fade-in').forEach(el => el.style.opacity = '1');
+    }, 2000);
+    
+    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+    // 2. CONFIGURAÇÃO SUPABASE
     const sbUrl = 'https://exwdgcfzqapparhzouni.supabase.co';
     const sbKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG';
     const supabase = supabase.createClient(sbUrl, sbKey);
 
-    // --- 2. CARREGAR PREÇOS DO BANCO ---
-    async function carregarPlanos() {
-        const { data: planos } = await supabase.from('plans').select('*');
-        if(!planos) return;
+    // 3. CARREGAR DADOS DO BANCO (Blindado com try/catch)
+    async function carregarDadosSite() {
+        try {
+            // Planos
+            const { data: planos } = await supabase.from('plans').select('*');
+            if(planos) {
+                planos.forEach(p => {
+                    const elPreco = document.getElementById(`preco-${p.tipo}`);
+                    const elDesc = document.getElementById(`desc-${p.tipo}`);
+                    if(elPreco) elPreco.innerText = `R$ ${p.preco}`;
+                    if(elDesc) elDesc.innerText = p.descricao;
+                });
+            }
 
-        planos.forEach(p => {
-            const elPreco = document.getElementById(`preco-${p.tipo}`);
-            const elDesc = document.getElementById(`desc-${p.tipo}`);
+            // Comentários
+            const { data: comments } = await supabase.from('public_comments').select('*').eq('aprovado', true).order('created_at', {ascending: false}).limit(5);
+            const wrapper = document.querySelector('.myCommentsSwiper .swiper-wrapper');
             
-            if(elPreco) elPreco.innerText = `R$ ${p.preco}`;
-            if(elDesc) elDesc.innerText = p.descricao;
-        });
+            if(comments && comments.length > 0 && wrapper) {
+                wrapper.innerHTML = comments.map(c => `
+                    <div class="swiper-slide">
+                        <div class="card p-8 text-center">
+                            <h3 class="font-bold text-xl">${c.nome}</h3>
+                            <div class="text-yellow-500 text-xs mb-2">${'★'.repeat(c.nota)}</div>
+                            <p class="text-zinc-400 mt-2">“${c.comentario}”</p>
+                        </div>
+                    </div>
+                `).join('');
+                // Reinicia swiper para pegar os novos slides
+                if(window.swiperCommentsInstance) window.swiperCommentsInstance.update();
+            } else if (wrapper) {
+                 wrapper.innerHTML = `<div class="swiper-slide"><div class="card p-8 text-center"><p class="text-zinc-500">Seja o primeiro a avaliar!</p></div></div>`;
+            }
+
+        } catch (error) {
+            console.log("Erro ao carregar dados dinâmicos (Site continua funcionando):", error);
+        }
     }
 
-    // --- 3. CONFIGURAÇÃO DOS CARROSSEIS ---
+    // 4. CONFIG CARROSSEIS
     const swiperVideos = new Swiper(".myVideosSwiper", {
         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-        loop: true,
-        spaceBetween: 30,
+        loop: true, spaceBetween: 30,
     });
 
-    const swiperComments = new Swiper(".myCommentsSwiper", {
+    window.swiperCommentsInstance = new Swiper(".myCommentsSwiper", {
         navigation: { nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" },
-        loop: true,
-        autoplay: { delay: 5000 },
+        loop: true, autoplay: { delay: 5000 },
     });
 
-    // Animações
-    const observer = new IntersectionObserver(e=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible')})},{threshold:.15});
-    document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
-    
+    // 5. INICIALIZAR
+    window.addEventListener('load', carregarDadosSite);
+
     // Login Funcionário
     document.getElementById('btn-staff-login').addEventListener('click', async () => {
         const email = document.getElementById('staff-email').value;
         const pass = document.getElementById('staff-password').value;
-        if(window.fazerLogin) {
-            await window.fazerLogin(email, pass);
-        } else {
-            alert("Erro: script-auth.js não carregado.");
-        }
+        if(window.fazerLogin) await window.fazerLogin(email, pass);
     });
-
-    // Iniciar carregamento dos planos
-    window.onload = function() {
-        carregarPlanos();
-    };
 </script>
 
 </body>
