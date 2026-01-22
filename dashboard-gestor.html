@@ -33,6 +33,7 @@
             <button onclick="mostrarAba('usuarios')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-users-cog w-5"></i> Equipe e Clientes</button>
             <div class="border-t border-zinc-800 my-2"></div>
             <button onclick="mostrarAba('site-editor')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-blue-400 flex items-center gap-3 transition font-bold"><i class="fas fa-edit w-5"></i> Editar Site & Planos</button>
+            <button onclick="mostrarAba('portfolio-manager')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-green-400 flex items-center gap-3 transition font-bold"><i class="fas fa-photo-video w-5"></i> Portfólio Site</button>
             <button onclick="mostrarAba('vip-manager')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-yellow-400 flex items-center gap-3 transition font-bold"><i class="fas fa-lock w-5"></i> Galeria VIP</button>
         </nav>
 
@@ -94,18 +95,34 @@
             </div>
         </section>
 
-        <section id="aba-vip-manager" class="hidden">
-            <h2 class="text-3xl font-bold mb-6">Gerenciar Galeria VIP</h2>
+        <section id="aba-portfolio-manager" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Gerenciar Portfólio (Site Público)</h2>
             <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8 flex gap-4 items-end">
                 <div class="flex-1">
-                    <label class="text-xs text-zinc-500 uppercase font-bold">Título do Vídeo</label>
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Título</label>
+                    <input type="text" id="novo-port-titulo" placeholder="Ex: Comercial Coca-Cola">
+                </div>
+                <div class="flex-1">
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Vídeo do Portfólio</label>
+                    <input type="file" id="novo-port-file" accept="video/*" class="text-sm text-zinc-300 w-full pt-1">
+                </div>
+                <button onclick="adicionarPortfolio()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-10">Adicionar ao Site</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lista-portfolio-manager"></div>
+        </section>
+
+        <section id="aba-vip-manager" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Gerenciar Galeria VIP (Área Cliente)</h2>
+            <div class="bg-[#161616] border border-zinc-800 p-6 rounded-xl mb-8 flex gap-4 items-end">
+                <div class="flex-1">
+                    <label class="text-xs text-zinc-500 uppercase font-bold">Título</label>
                     <input type="text" id="novo-vip-titulo" placeholder="Ex: Lançamento X">
                 </div>
                 <div class="flex-1">
                     <label class="text-xs text-zinc-500 uppercase font-bold">Arquivo de Vídeo</label>
                     <input type="file" id="novo-vip-file" accept="video/*" class="text-sm text-zinc-300 w-full pt-1">
                 </div>
-                <button onclick="adicionarVideoVIP()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">Upload e Salvar</button>
+                <button onclick="adicionarVideoVIP()" class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded h-10">Adicionar VIP</button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="lista-vip-manager"></div>
         </section>
@@ -113,12 +130,14 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-gestor.js?v=5"></script> 
+    <script src="script-gestor.js?v=6"></script> 
     <script>
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
+            // Carrega dados específicos da aba
             if(aba === 'site-editor') window.carregarDadosSite();
+            if(aba === 'portfolio-manager') window.carregarPortfolio(); // NOVO
             if(aba === 'vip-manager') window.carregarVipManager();
         }
     </script>
