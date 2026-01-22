@@ -193,6 +193,57 @@
         }
     });
 </script>
+<script>
+    // 1. Carregar Planos do Banco
+    async function carregarPlanos() {
+        const { data: planos } = await supabase.from('plans').select('*');
+        if(!planos) return;
 
+        planos.forEach(p => {
+            // Procura elementos com ID tipo 'preco-basico' ou 'desc-basico'
+            const elPreco = document.getElementById(`preco-${p.tipo}`);
+            const elDesc = document.getElementById(`desc-${p.tipo}`);
+            
+            if(elPreco) elPreco.innerText = `R$ ${p.preco}`;
+            // Se você tiver um lugar para descrição no HTML, ele atualizaria aqui
+        });
+    }
+
+    // 2. Carregar Comentários
+    async function carregarComentarios() {
+        const { data: comments } = await supabase.from('public_comments').select('*').order('created_at', {ascending: false}).limit(5);
+        const wrapper = document.querySelector('.myCommentsSwiper .swiper-wrapper');
+        if(!comments || !wrapper) return;
+
+        wrapper.innerHTML = comments.map(c => `
+            <div class="swiper-slide">
+                <div class="card p-8 text-center">
+                    <h3 class="font-bold text-xl">${c.nome}</h3>
+                    <div class="text-yellow-500 text-xs mb-2">${'★'.repeat(c.nota)}</div>
+                    <p class="text-zinc-400 mt-2">“${c.comentario}”</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 3. Enviar Novo Comentário
+    async function enviarComentario() {
+        const nome = prompt("Seu nome:");
+        const texto = prompt("Seu comentário:");
+        const nota = prompt("Nota (1 a 5):");
+        
+        if(nome && texto && nota) {
+            await supabase.from('public_comments').insert([{ nome, comentario: texto, nota: parseInt(nota) }]);
+            alert("Obrigado pelo feedback!");
+            carregarComentarios();
+        }
+    }
+
+    // Inicializa
+    window.addEventListener('load', () => {
+        carregarPlanos();
+        carregarComentarios();
+    });
+</script>
 </body>
 </html>
