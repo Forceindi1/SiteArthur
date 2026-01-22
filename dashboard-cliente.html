@@ -40,6 +40,8 @@
                 <button onclick="mostrarAba('exemplos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-blue-400 flex items-center gap-3 transition font-bold bg-blue-900/10 border border-blue-900/30"><i class="fas fa-lock w-5"></i> Galeria VIP</button>
                 <button onclick="mostrarAba('pedidos')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-list w-5"></i> Meus Pedidos</button>
                 <button onclick="mostrarAba('perfil')" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-zinc-300 flex items-center gap-3 transition"><i class="fas fa-user-cog w-5"></i> Meu Perfil</button>
+                
+                <a href="index.html#depoimentos" target="_blank" class="w-full text-left p-3 rounded hover:bg-zinc-800 text-yellow-500 flex items-center gap-3 transition font-bold mt-4 border border-zinc-800"><i class="fas fa-star w-5"></i> Avaliar Serviços</a>
             </nav>
         </div>
         
@@ -125,7 +127,6 @@
             <p class="text-zinc-400 mb-8 border-l-4 border-yellow-600 pl-4 italic bg-yellow-900/10 p-2 rounded-r">
                 Estes projetos são confidenciais e estão disponíveis apenas para clientes cadastrados. Proibida a divulgação.
             </p>
-
             <div id="lista-vip-cliente" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <p class="text-zinc-500">Carregando galeria...</p>
             </div>
@@ -160,13 +161,12 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-cliente.js?v=11"></script>
+    <script src="script-cliente.js?v=12"></script>
     <script>
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
             if(aba === 'pedidos') carregarPedidos();
-            // A galeria VIP já carrega no inicio, mas se quiser recarregar:
             if(aba === 'exemplos' && window.carregarGaleriaVip) window.carregarGaleriaVip();
         }
         document.getElementById('arquivo-video').addEventListener('change', function(){
