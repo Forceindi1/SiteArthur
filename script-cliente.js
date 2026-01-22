@@ -102,9 +102,10 @@ if (formPedido) {
     formPedido.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // --- SEU NÚMERO AQUI ---
-        const telefoneGestor = "5511989930723"; 
-        // -----------------------
+        // --- CONFIGURAÇÃO DO ROBÔ DE NOTIFICAÇÃO ---
+        const telefoneGestor = "5511989930723"; // Seu número (DDD + Número)
+        const callMeBotApiKey = "1285597"; // <--- COLE SUA API KEY DO PASSO 1 AQUI
+        // -------------------------------------------
 
         const titulo = document.getElementById('titulo').value;
         const descricao = document.getElementById('descricao').value;
@@ -122,7 +123,7 @@ if (formPedido) {
         btn.innerText = "Enviando... (Aguarde)";
 
         try {
-            // 1. Upload
+            // 1. Upload do Vídeo
             const nomeLimpo = arquivo.name.replace(/[^a-zA-Z0-9.]/g, '_');
             const nomeArquivo = `${userAtual.id}_${Date.now()}_${nomeLimpo}`; 
             
@@ -131,7 +132,7 @@ if (formPedido) {
 
             const { data: urlData } = supabaseClient.storage.from('videos').getPublicUrl(nomeArquivo);
 
-            // 2. Insert DB
+            // 2. Salvar no Banco
             const { error: dbError } = await supabaseClient.from('orders').insert([{
                 client_id: userAtual.id,
                 titulo_ideia: titulo,
@@ -144,14 +145,17 @@ if (formPedido) {
 
             if (dbError) throw dbError;
 
-            // 3. Notificação WhatsApp
-            const textoMensagem = `🚀 *Novo Pedido Recebido!*\n\n🎬 *Título:* ${titulo}\n📄 *Plano:* ${planoSelecionado.toUpperCase()}\n👤 *Cliente:* ${userAtual.email}\n\n_Acesse o painel para ver o vídeo._`;
-            const linkZap = `https://wa.me/${telefoneGestor}?text=${encodeURIComponent(textoMensagem)}`;
-            
-            // Abre WhatsApp
-            window.open(linkZap, '_blank');
+            // 3. Notificação SILENCIOSA (CallMeBot)
+            // O cliente NÃO VÊ ISSO, acontece nos bastidores.
+            if (callMeBotApiKey && callMeBotApiKey !== "XXXXXX") {
+                const mensagem = `🚀 Novo Pedido no Sistema!\n\n🎬 Título: ${titulo}\n👤 Cliente: ${userAtual.email}\n📄 Plano: ${planoSelecionado}`;
+                const urlNotificacao = `https://api.callmebot.com/whatsapp.php?phone=${telefoneGestor}&text=${encodeURIComponent(mensagem)}&apikey=${callMeBotApiKey}`;
+                
+                // Dispara o aviso sem esperar resposta (Fire and Forget)
+                fetch(urlNotificacao, { mode: 'no-cors' }).catch(err => console.log("Erro notif:", err));
+            }
 
-            alert("Pedido enviado! Verifique seu WhatsApp para confirmar com o gestor.");
+            alert("Pedido enviado com sucesso! Nossa equipe já foi notificada.");
             window.location.reload(); 
             
         } catch (error) {
