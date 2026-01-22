@@ -10,14 +10,12 @@
         body { background:#0b0b0b; color:#e7e7e7; font-family:'Inter', sans-serif; }
         .sidebar { background:#121212; border-right:1px solid #232323; min-height:100vh; }
         .card { background:#161616; border:1px solid #2a2a2a; border-radius:16px; }
-        .status-pendente { color: #fbbf24; background: #451a03; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
-        .status-aceito { color: #60a5fa; background: #172554; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
-        .status-em_andamento { color: #c084fc; background: #3b0764; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
-        .status-finalizado { color: #4ade80; background: #052e16; padding: 4px 12px; border-radius: 99px; font-size: 0.8rem; }
         
-        /* Spinner de Carregamento */
+        /* Loader e Animações */
         .loader { border: 4px solid #333; border-top: 4px solid #3b82f6; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display:none; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
     </style>
 </head>
 <body class="flex flex-col md:flex-row">
@@ -52,6 +50,33 @@
 
                     <label class="block text-zinc-400 text-sm mb-2">Descrição Detalhada</label>
                     <textarea id="descricao" rows="4" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 mb-4 focus:border-blue-500 outline-none text-white transition"></textarea>
+
+                    <label class="block text-zinc-400 text-sm mb-2 mt-4">Escolha seu Plano</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plano" value="basico" class="peer sr-only" required>
+                            <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-blue-500 peer-checked:bg-blue-900/20 transition hover:bg-zinc-800 text-center">
+                                <p class="font-bold text-white">Básico</p>
+                                <p class="text-xs text-zinc-500 mt-1">Cortes simples</p>
+                            </div>
+                        </label>
+                        
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plano" value="intermediario" class="peer sr-only">
+                            <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-purple-500 peer-checked:bg-purple-900/20 transition hover:bg-zinc-800 text-center">
+                                <p class="font-bold text-white">Intermediário</p>
+                                <p class="text-xs text-zinc-500 mt-1">Legendas e Efeitos</p>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="plano" value="avancado" class="peer sr-only">
+                            <div class="p-4 rounded-xl border border-zinc-700 bg-zinc-900 peer-checked:border-yellow-500 peer-checked:bg-yellow-900/20 transition hover:bg-zinc-800 text-center">
+                                <p class="font-bold text-white">Avançado</p>
+                                <p class="text-xs text-zinc-500 mt-1">Motion Graphics</p>
+                            </div>
+                        </label>
+                    </div>
 
                     <label class="block text-zinc-400 text-sm mb-2">Upload do Vídeo Bruto</label>
                     <div class="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center hover:border-blue-500 transition cursor-pointer relative bg-zinc-900/50">
@@ -98,7 +123,7 @@
                         <input type="text" id="perfil-whatsapp" class="w-full bg-zinc-900 border border-zinc-700 rounded p-3 text-white focus:border-blue-500 outline-none">
                     </div>
                     <div>
-                        <label class="block text-zinc-400 text-sm mb-1">E-mail (Não alterável)</label>
+                        <label class="block text-zinc-400 text-sm mb-1">E-mail</label>
                         <input type="text" id="perfil-email" disabled class="w-full bg-zinc-900/50 border border-zinc-800 rounded p-3 text-zinc-500 cursor-not-allowed">
                     </div>
 
@@ -111,24 +136,20 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script-cliente.js?v=6"></script> <script>
-        // Lógica de abas
+    <script src="script-cliente.js?v=7"></script> <script>
+        // Funções visuais da página
         function mostrarAba(aba) {
             document.querySelectorAll('section').forEach(sec => sec.classList.add('hidden'));
             document.getElementById('aba-' + aba).classList.remove('hidden');
-            
             if(aba === 'pedidos') carregarPedidos();
-            // Se for perfil, a gente já carrega os dados no inicio, mas pode recarregar se quiser
         }
 
-        // Mostrar nome do arquivo de vídeo selecionado
         document.getElementById('arquivo-video').addEventListener('change', function(){
             const nome = this.files[0] ? this.files[0].name : "Arraste ou clique para selecionar";
             document.getElementById('file-name').innerText = nome;
             document.getElementById('file-name').classList.add('text-blue-400');
         });
 
-        // Preview da foto de perfil antes de salvar
         document.getElementById('input-avatar').addEventListener('change', function(e){
             const file = e.target.files[0];
             if(file){
