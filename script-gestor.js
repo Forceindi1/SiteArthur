@@ -2,11 +2,11 @@
 const supabaseUrl = 'https://exwdgcfzqapparhzouni.supabase.co'; 
 const supabaseKey = 'sb_publishable_HjQcT-uXXklApasRoad4uw_fA7zIPdG'; 
 
-console.log("SCRIPT GESTOR V2.0 (RELATÓRIOS) - CARREGADO");
+console.log("SCRIPT GESTOR V2.1 (EXCEL BR) - CARREGADO");
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// --- TABELA DE PREÇOS (Se precisar mudar valor, mude aqui) ---
+// --- TABELA DE PREÇOS ---
 const TABELA_PRECOS = {
     'basico': 50.00,
     'intermediario': 100.00,
@@ -24,7 +24,7 @@ window.onload = async () => {
     if (!user) { window.location.href = "login.html"; return; }
     usuarioLogado = user;
 
-    // 2. Verifica se é GESTOR mesmo (Segurança)
+    // 2. Verifica se é GESTOR
     const { data: perfil } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
     
     if (perfil.role !== 'gestor') {
@@ -40,11 +40,9 @@ window.onload = async () => {
 };
 
 async function carregarDados() {
-    // Busca Usuários
     const { data: users } = await supabaseClient.from('profiles').select('*').order('created_at', {ascending: false});
     todosUsuarios = users || [];
 
-    // Busca Pedidos
     const { data: orders } = await supabaseClient.from('orders').select('*').order('data_solicitacao', {ascending: false});
     todosPedidos = orders || [];
 
@@ -61,7 +59,6 @@ function atualizarDashboard() {
     document.getElementById('kpi-andamento').innerText = todosPedidos.filter(p => p.status === 'em_andamento' || p.status === 'aceito').length;
     document.getElementById('kpi-finalizados').innerText = todosPedidos.filter(p => p.status === 'finalizado').length;
 
-    // Tabela Recentes (Top 5)
     const recentes = todosPedidos.slice(0, 5);
     const tbody = document.getElementById('tabela-recentes');
     
@@ -144,38 +141,33 @@ function renderizarUsuarios() {
     }).join('');
 }
 
-// --- FUNÇÃO DE RELATÓRIO (CSV / EXCEL) ---
+// --- FUNÇÃO DE RELATÓRIO (CORRIGIDA PARA EXCEL BR) ---
 window.baixarRelatorio = function() {
     if(todosPedidos.length === 0) { alert("Sem dados para exportar."); return; }
 
-    // Cabeçalho do CSV
-    let csv = "ID,Cliente,Email,Telefone,Plano,Tem Capa?,Valor Cobrado (R$),Editor,Solicitado em,Concluido em,Minutos Video\n";
+    // MUDANÇA: Usando ponto e vírgula (;) no cabeçalho
+    let csv = "ID;Cliente;Email;Telefone;Plano;Tem Capa?;Valor Cobrado (R$);Editor;Solicitado em;Concluido em;Minutos Video\n";
 
     todosPedidos.forEach(p => {
-        // Encontra os dados cruzados
         const cliente = todosUsuarios.find(u => u.id === p.client_id) || {};
         const editor = todosUsuarios.find(u => u.id === p.editor_id) || {};
         
-        // 1. Calcula Valor Base do Plano
         let valorBase = TABELA_PRECOS[p.plano_escolhido] || 0;
-        
-        // 2. Soma Capa se tiver (NOVO)
         if (p.adicional_thumbnail === true) {
             valorBase += 50.00;
         }
 
         const valorFormatado = valorBase.toFixed(2).replace('.', ',');
-
-        // Formata Datas
         const dataSol = new Date(p.data_solicitacao).toLocaleDateString();
         const dataConc = p.data_conclusao ? new Date(p.data_conclusao).toLocaleDateString() : 'Pendente';
 
-        // Monta a linha
-        csv += `${p.id},"${cliente.nome || ''}","${cliente.email || ''}","${cliente.whatsapp || ''}",${p.plano_escolhido || 'N/A'},${p.adicional_thumbnail ? 'SIM' : 'NÃO'},"${valorFormatado}","${editor.nome || 'N/A'}",${dataSol},${dataConc},${p.duracao_minutos || 0}\n`;
+        // MUDANÇA: Usando ponto e vírgula (;) e aspas para proteger textos
+        csv += `${p.id};"${cliente.nome || ''}";"${cliente.email || ''}";"${cliente.whatsapp || ''}";${p.plano_escolhido || 'N/A'};${p.adicional_thumbnail ? 'SIM' : 'NÃO'};"${valorFormatado}";"${editor.nome || 'N/A'}";${dataSol};${dataConc};${p.duracao_minutos || 0}\n`;
     });
 
-    // Download
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    // MUDANÇA: Adicionando \uFEFF para corrigir acentos no Excel
+    const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+    
     const link = document.createElement("a");
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
